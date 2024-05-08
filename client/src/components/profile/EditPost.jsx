@@ -235,7 +235,7 @@ const EditPost = () => {
               src={
                 secondPreview
                   ? secondPreview
-                  : imagePreview
+                  : `https://blogmania-1.onrender.com/${imagePreview}`
               }
               alt="Selected"
               className="mt-2 max-w-full h-auto"
