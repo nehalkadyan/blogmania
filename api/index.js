@@ -12,6 +12,7 @@ const path = require("path");
 dotenv.config();
 
 const corsOptions = {
+  origin: 'https://blogmania-1.onrender.com',
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
