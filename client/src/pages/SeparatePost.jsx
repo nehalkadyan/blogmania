@@ -39,7 +39,7 @@ const SeparatePost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `api/posts/post/${id}`,
+          `https://blogmania-1.onrender.com/api/posts/post/${id}`,
           {
             method: "GET",
           }
