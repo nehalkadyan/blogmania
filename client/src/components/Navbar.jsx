@@ -71,7 +71,7 @@ const Navbar = () => {
                     src={
                       containsHttp
                         ? currentUser?.image
-                        : `${process.env.REACT_APP_API_URL}/${currentUser?.image}`
+                        : {currentUser?.image}
                     }
                     alt="user"
                   />
@@ -154,7 +154,7 @@ const Navbar = () => {
                     src={
                       containsHttp
                         ? currentUser?.image
-                        : `${process.env.REACT_APP_API_URL}/${currentUser?.image}`
+                        : {currentUser?.image}
                     }
                     alt="user"
                   />
