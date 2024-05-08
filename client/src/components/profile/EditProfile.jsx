@@ -142,7 +142,7 @@ const EditProfile = () => {
                   ? imagePreview
                   : containsHttp
                   ? currentUser.image
-                  : currentUser.image}
+                  : currentUser.image
               }
               alt="user"
             />
