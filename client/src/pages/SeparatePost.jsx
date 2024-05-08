@@ -11,6 +11,14 @@ const SeparatePost = () => {
 
   const containsHttp = currentUser?.image.includes("http");
 
+    const commentImgContainsHTTp = (image) => {
+    if (image.includes("http")) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const [post, setPost] = useState({});
 
   const [liked, setLiked] = useState(false);
@@ -292,7 +300,7 @@ const SeparatePost = () => {
             <div key={comment._id} className="mb-4">
               <div className="flex items-center mb-2">
                 <img
-                  src={`https://blogmania-1.onrender.com/${comment.userImg}`}
+                  src={commentImgContainsHTTp(comment?.userImg) ? comment?.userImg : `https://blogmania-1.onrender.com/${comment.userImg}`}
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
                 />
