@@ -95,7 +95,7 @@ const CreatePost = ({ setActiveTab }) => {
       formDataToSend.append("image", formData.image);
       formDataToSend.append("caption", formData.caption);
       const res = await fetch(
-        `api/posts/create`,
+        `https://blogmania-1.onrender.com/api/posts/create`,
         {
           method: "POST",
           body: formDataToSend,
