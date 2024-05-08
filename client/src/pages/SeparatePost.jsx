@@ -305,7 +305,7 @@ const SeparatePost = () => {
                 <div>
                   {currentUser?.email === comment.createdBy && (
                     <div className="flex items-center space-x-2">
-                      {/* Render textarea for editing only if commentIdToBeEdited matches comment._id */}
+                    
                       {commentIdToBeEdited === comment._id ? (
                         <div className="w-full">
                           <textarea
