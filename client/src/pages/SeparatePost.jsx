@@ -39,7 +39,7 @@ const SeparatePost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/posts/post/${id}`,
+          `/api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -74,7 +74,7 @@ const SeparatePost = () => {
   const handleCommentPublish = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/comments`,
+        `api/posts/${id}/comments`,
         {
           method: "POST",
           headers: {
@@ -111,7 +111,7 @@ const SeparatePost = () => {
   const handleUpdateComment = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/${commentIdToBeEdited}`,
+        `/api/posts/${id}/${commentIdToBeEdited}`,
         {
           method: "PUT",
           headers: {
