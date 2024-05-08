@@ -12,7 +12,6 @@ const path = require("path");
 dotenv.config();
 
 const corsOptions = {
-  origin: "https://blogmania-jmcl.onrender.com/",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowHeaders: ["Content-Type", "Authorization"],
   credentials: true,
