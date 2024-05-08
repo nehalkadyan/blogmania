@@ -71,7 +71,7 @@ const Navbar = () => {
                     src={
                       containsHttp
                         ? currentUser?.image
-                        : {currentUser?.image}
+                        : currentUser?.image
                     }
                     alt="user"
                   />
@@ -154,7 +154,7 @@ const Navbar = () => {
                     src={
                       containsHttp
                         ? currentUser?.image
-                        : {currentUser?.image}
+                        : currentUser?.image
                     }
                     alt="user"
                   />
