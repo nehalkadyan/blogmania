@@ -107,7 +107,7 @@ const Homepage = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={{post?.image}}
+                src={post?.image}
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
