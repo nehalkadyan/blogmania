@@ -51,22 +51,6 @@ const CreatePost = ({ setActiveTab }) => {
     }
   };
 
-  // const readFileAsBase64 = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-
-  //     reader.onload = () => {
-  //       resolve(reader.result.split(",")[1]);
-  //     };
-
-  //     reader.onerror = () => {
-  //       reject(reader.error);
-  //     };
-
-  //     reader.readAsDataURL(file);
-  //   });
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,7 +95,7 @@ const CreatePost = ({ setActiveTab }) => {
       formDataToSend.append("image", formData.image);
       formDataToSend.append("caption", formData.caption);
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/create`,
+        `api/posts/create`,
         {
           method: "POST",
           body: formDataToSend,
