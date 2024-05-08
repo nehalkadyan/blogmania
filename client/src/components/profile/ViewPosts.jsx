@@ -168,8 +168,12 @@ const ViewPosts = () => {
               </div>
             </>
           ))
-        ) : (
+        ) : userPosts?.length > 0 ? (
           <Loader />
+        ) : (
+          <h1 className="md:text-2xl text-xl font-semibold mt-4">
+            You have not created any posts yet
+          </h1>
         )}
       </div>
     </div>
