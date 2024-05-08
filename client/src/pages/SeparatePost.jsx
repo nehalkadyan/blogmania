@@ -229,7 +229,7 @@ const SeparatePost = () => {
             src={
               containsHttp
                 ? currentUser?.image
-                : post?.createdBy?.image
+                : `https://blogmania-1.onrender.com/${post?.createdBy?.image}`
             }
             alt={post.createdBy?.email}
           />
