@@ -35,6 +35,10 @@ const SeparatePost = () => {
     setUpdateComment(e.target.value);
   };
 
+   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
