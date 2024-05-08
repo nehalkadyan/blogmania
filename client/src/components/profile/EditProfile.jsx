@@ -80,7 +80,7 @@ const EditProfile = () => {
       formDataToSend.append("image", formData.image);
       formDataToSend.append("password", formData.password);
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/update/users/${id}`,
+        `api/update/users/${id}`,
         {
           method: "PUT",
           body: formDataToSend,
@@ -106,7 +106,7 @@ const EditProfile = () => {
   const handleDeleteUser = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/delete/user/${id}`,
+        `api/delete/user/${id}`,
         {
           method: "DELETE",
         }
@@ -142,7 +142,7 @@ const EditProfile = () => {
                   ? imagePreview
                   : containsHttp
                   ? currentUser.image
-                  : `${process.env.REACT_APP_API_URL}/${currentUser.image}`
+                  : currentUser.image}
               }
               alt="user"
             />
