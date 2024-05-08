@@ -23,7 +23,7 @@ const Homepage = () => {
     window.scrollTo(0, 0);
     const fetchPosts = async () => {
       try {
-        let url = `${process.env.REACT_APP_API_URL}/api/posts/allposts`;
+        let url = `api/posts/allposts`;
         if (selectedCategory !== null && selectedCategory !== "All") {
           url += `?category=${selectedCategory}`;
         }
@@ -107,7 +107,7 @@ const Homepage = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={`${process.env.REACT_APP_API_URL}/${post?.image}`}
+                src={{post?.image}}
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
@@ -119,7 +119,7 @@ const Homepage = () => {
                   <div className="flex items-center gap-2">
                     <img
                       className="w-10 h-10 rounded-full object-cover"
-                      src={`${process.env.REACT_APP_API_URL}/${post?.createdBy?.image}`}
+                      src={post?.createdBy?.image}
                       alt="user"
                     />
                     <p className="font-semibold">{post?.createdBy?.email}</p>
