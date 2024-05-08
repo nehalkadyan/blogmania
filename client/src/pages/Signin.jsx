@@ -53,7 +53,7 @@ const Signin = () => {
       setLoading(true);
       setError(null);
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/signin`,
+        `api/auth/signin`,
         {
           method: "POST",
           headers: {
