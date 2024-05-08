@@ -39,7 +39,7 @@ const EditPost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `api/posts/post/${id}`,
+          `https://blogmania-1.onrender.com/api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -126,7 +126,7 @@ const EditPost = () => {
       formDataToSend.append("image", formData.image);
       formDataToSend.append("caption", formData.caption);
       const res = await fetch(
-        `api/posts/${id}/update`,
+        `https://blogmania-1.onrender.com/api/posts/${id}/update`,
         {
           method: "PUT",
           body: formDataToSend,
