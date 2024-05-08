@@ -17,7 +17,7 @@ const ViewPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await fetch(
-          `api/posts/post`,
+          `https://blogmania-1.onrender.com/api/posts/post`,
           {
             method: "GET",
             credentials: "include",
@@ -38,7 +38,7 @@ const ViewPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await fetch(
-          `api/posts/post`,
+          `https://blogmania-1.onrender.com/api/posts/post`,
           {
             method: "GET",
             credentials: "include",
@@ -63,7 +63,7 @@ const ViewPosts = () => {
   const handleDeletePost = async () => {
     try {
       const res = await fetch(
-        `api/posts/${postIdToBeDeleted}/delete`,
+        `https://blogmania-1.onrender.com/api/posts/${postIdToBeDeleted}/delete`,
         {
           method: "DELETE",
           credentials: "include",
@@ -116,7 +116,7 @@ const ViewPosts = () => {
                   <Link to={`/post/${post._id}`}>
                     <div key={post._id}>
                       <img
-                        src={post.image}
+                        src={`https://blogmania-1.onrender.com/${post.image}`}
                         alt={post.title}
                         className="w-full h-48 object-cover rounded-t-lg"
                       />
