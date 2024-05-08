@@ -13,7 +13,6 @@ dotenv.config();
 
 const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 
