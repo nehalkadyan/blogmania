@@ -39,7 +39,7 @@ const SeparatePost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `/api/posts/post/${id}`,
+          `api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -111,7 +111,7 @@ const SeparatePost = () => {
   const handleUpdateComment = async () => {
     try {
       const res = await fetch(
-        `/api/posts/${id}/${commentIdToBeEdited}`,
+        `api/posts/${id}/${commentIdToBeEdited}`,
         {
           method: "PUT",
           headers: {
@@ -137,7 +137,7 @@ const SeparatePost = () => {
   const handleDeleteComment = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/delete/${id}/${commentIdToBeDeleted}`,
+        `api/posts/delete/${id}/${commentIdToBeDeleted}`,
         {
           method: "DELETE",
         }
@@ -155,16 +155,6 @@ const SeparatePost = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const alreadyLiked = postArray.find(
-  //     (post) => post.postId === currentUser?.id
-  //   );
-  //   console.log("useEffect alreadyLiked", alreadyLiked);
-  //   if (alreadyLiked) {
-  //     setLiked(true);
-  //   }
-  // }, []);
-
   const handleLikeClick = async () => {
     if (!currentUser) {
       setLikeValidation("You must be logged in to like and comment");
@@ -172,7 +162,7 @@ const SeparatePost = () => {
     }
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/like/postLike`,
+        `api/posts/${id}/like/postLike`,
         {
           method: "PUT",
           headers: {
@@ -227,7 +217,7 @@ const SeparatePost = () => {
       <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
       <div className="flex justify-center mb-4">
         <img
-          src={`${process.env.REACT_APP_API_URL}/${post.image}`}
+          src={post.image}
           alt={post.title}
           className="rounded-lg shadow-md"
         />
@@ -239,7 +229,7 @@ const SeparatePost = () => {
             src={
               containsHttp
                 ? currentUser?.image
-                : `${process.env.REACT_APP_API_URL}/${post?.createdBy?.image}`
+                : post?.createdBy?.image
             }
             alt={post.createdBy?.email}
           />
@@ -298,7 +288,7 @@ const SeparatePost = () => {
             <div key={comment._id} className="mb-4">
               <div className="flex items-center mb-2">
                 <img
-                  src={`${process.env.REACT_APP_API_URL}/${comment.userImg}`}
+                  src={comment.userImg}
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
                 />
