@@ -107,7 +107,7 @@ const Homepage = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={`https://blogmania-1.onrender.com/${post?.image}`}
+                src={`https://blogmania-1.onrender.com/${post?.image}?timestamp=${new Date().getTime()}`}
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
@@ -119,7 +119,7 @@ const Homepage = () => {
                   <div className="flex items-center gap-2">
                     <img
                       className="w-10 h-10 rounded-full object-cover"
-                      src={`https://blogmania-1.onrender.com/${post?.createdBy?.image}`}
+                      src={`https://blogmania-1.onrender.com/${post?.createdBy?.image}?timestamp=${new Date().getTime()}`}
                       alt="user"
                     />
                     <p className="font-semibold">{post?.createdBy?.email}</p>
