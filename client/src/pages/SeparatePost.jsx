@@ -51,7 +51,7 @@ const SeparatePost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/posts/post/${id}`,
+          `https://blogmania-1.onrender.com/api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -86,7 +86,7 @@ const SeparatePost = () => {
   const handleCommentPublish = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/comments`,
+        `https://blogmania-1.onrender.com/api/posts/${id}/comments`,
         {
           method: "POST",
           headers: {
@@ -123,7 +123,7 @@ const SeparatePost = () => {
   const handleUpdateComment = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/${commentIdToBeEdited}`,
+        `https://blogmania-1.onrender.com/api/posts/${id}/${commentIdToBeEdited}`,
         {
           method: "PUT",
           headers: {
@@ -149,7 +149,7 @@ const SeparatePost = () => {
   const handleDeleteComment = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/delete/${id}/${commentIdToBeDeleted}`,
+        `https://blogmania-1.onrender.com/api/posts/delete/${id}/${commentIdToBeDeleted}`,
         {
           method: "DELETE",
         }
@@ -174,7 +174,7 @@ const SeparatePost = () => {
     }
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/like/postLike`,
+        `https://blogmania-1.onrender.com/api/posts/${id}/like/postLike`,
         {
           method: "PUT",
           headers: {
@@ -229,7 +229,7 @@ const SeparatePost = () => {
       <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
       <div className="flex justify-center mb-4">
         <img
-          src={`http://localhost:5000/${post.image}`}
+          src={`https://blogmania-1.onrender.com/${post.image}`}
           alt={post.title}
           className="rounded-lg shadow-md"
         />
@@ -241,7 +241,7 @@ const SeparatePost = () => {
             src={
               commentImgContainsHTTp(post?.createdBy?.image)
                 ? post?.createdBy?.image
-                : `http://localhost:5000/${post?.createdBy?.image}`
+                : `https://blogmania-1.onrender.com/${post?.createdBy?.image}`
             }
             alt={post.createdBy?.email}
           />
@@ -303,7 +303,7 @@ const SeparatePost = () => {
                   src={
                     commentImgContainsHTTp(comment?.userImg)
                       ? comment?.userImg
-                      : `http://localhost:5000/${comment.userImg}`
+                      : `https://blogmania-1.onrender.com/${comment.userImg}`
                   }
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
