@@ -8,6 +8,15 @@ const Blogs = () => {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
 
+    const creatorImageContainsHttp = (image) => {
+    if (image?.includes("http")) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+
   // Mock data for categories
   const categories = [
     "All",
@@ -128,7 +137,7 @@ const Blogs = () => {
                   <div className="flex items-center gap-2">
                     <img
                       className="w-10 h-10 rounded-full object-cover"
-                      src={`https://blogmania-1.onrender.com/${post?.createdBy?.image}`}
+                      src={creatorImageContainsHttp(post?.createdBy?.image) ? post?.createdBy?.image : `https://blogmania-1.onrender.com/${post?.createdBy?.image}`}
                       alt="user"
                     />
                     <p className="font-semibold">{post?.createdBy?.email}</p>
