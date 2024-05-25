@@ -142,7 +142,7 @@ const EditProfile = () => {
                   ? imagePreview
                   : containsHttp
                   ? currentUser.image
-                  : `https://blogmania-1.onrender.com/${currentUser?.image}`
+                  : "https://blogmania-1.onrender.com/" + currentUser?.image
               }
               alt="user"
             />
