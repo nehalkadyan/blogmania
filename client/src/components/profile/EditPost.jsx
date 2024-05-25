@@ -235,7 +235,7 @@ const EditPost = () => {
               src={
                 secondPreview
                   ? secondPreview
-                  : `${process.env.REACT_APP_API_URL}/${imagePreview}`
+                  : "http://localhost:5000/" + imagePreview
               }
               alt="Selected"
               className="mt-2 max-w-full h-auto"

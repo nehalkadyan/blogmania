@@ -11,6 +11,14 @@ const SeparatePost = () => {
 
   const containsHttp = currentUser?.image.includes("http");
 
+  const commentImgContainsHTTp = (image) => {
+    if (image?.includes("http")) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const [post, setPost] = useState({});
 
   const [liked, setLiked] = useState(false);
@@ -34,6 +42,10 @@ const SeparatePost = () => {
   const handleUpdateCommentChange = (e) => {
     setUpdateComment(e.target.value);
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -155,16 +167,6 @@ const SeparatePost = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const alreadyLiked = postArray.find(
-  //     (post) => post.postId === currentUser?.id
-  //   );
-  //   console.log("useEffect alreadyLiked", alreadyLiked);
-  //   if (alreadyLiked) {
-  //     setLiked(true);
-  //   }
-  // }, []);
-
   const handleLikeClick = async () => {
     if (!currentUser) {
       setLikeValidation("You must be logged in to like and comment");
@@ -227,7 +229,7 @@ const SeparatePost = () => {
       <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
       <div className="flex justify-center mb-4">
         <img
-          src={`${process.env.REACT_APP_API_URL}/${post.image}`}
+          src={`http://localhost:5000/${post.image}`}
           alt={post.title}
           className="rounded-lg shadow-md"
         />
@@ -237,9 +239,9 @@ const SeparatePost = () => {
           <img
             className="w-10 h-10 rounded-full object-cover"
             src={
-              containsHttp
-                ? currentUser?.image
-                : `${process.env.REACT_APP_API_URL}/${post?.createdBy?.image}`
+              commentImgContainsHTTp(post?.createdBy?.image)
+                ? post?.createdBy?.image
+                : `http://localhost:5000/${post?.createdBy?.image}`
             }
             alt={post.createdBy?.email}
           />
@@ -298,7 +300,11 @@ const SeparatePost = () => {
             <div key={comment._id} className="mb-4">
               <div className="flex items-center mb-2">
                 <img
-                  src={`${process.env.REACT_APP_API_URL}/${comment.userImg}`}
+                  src={
+                    commentImgContainsHTTp(comment?.userImg)
+                      ? comment?.userImg
+                      : `http://localhost:5000/${comment.userImg}`
+                  }
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
                 />
@@ -315,7 +321,6 @@ const SeparatePost = () => {
                 <div>
                   {currentUser?.email === comment.createdBy && (
                     <div className="flex items-center space-x-2">
-                      {/* Render textarea for editing only if commentIdToBeEdited matches comment._id */}
                       {commentIdToBeEdited === comment._id ? (
                         <div className="w-full">
                           <textarea

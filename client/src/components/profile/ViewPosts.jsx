@@ -11,7 +11,7 @@ const ViewPosts = () => {
   const [showModal, setShowModal] = useState(false);
   const [biggerView, setBiggerView] = useState("default");
 
-  console.log(userPosts);
+  console.log("userposts", userPosts);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -113,10 +113,10 @@ const ViewPosts = () => {
             <>
               <div>
                 <div className="bg-white rounded-lg shadow-lg">
-                  <Link to={`/post/${post._id}`}>
-                    <div key={post._id}>
+                  <Link key={post._id} to={`/post/${post._id}`}>
+                    <div>
                       <img
-                        src={`${process.env.REACT_APP_API_URL}/${post.image}`}
+                        src={"http://localhost:5000/" + post.image}
                         alt={post.title}
                         className="w-full h-48 object-cover rounded-t-lg"
                       />
@@ -168,8 +168,12 @@ const ViewPosts = () => {
               </div>
             </>
           ))
-        ) : (
+        ) : userPosts?.length > 0 ? (
           <Loader />
+        ) : (
+          <h1 className="md:text-2xl text-xl font-semibold mt-4">
+            You have not created any posts yet
+          </h1>
         )}
       </div>
     </div>

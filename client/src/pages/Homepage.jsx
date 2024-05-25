@@ -9,6 +9,14 @@ const Homepage = () => {
   const [displayedPosts, setDisplayedPosts] = useState([]);
   const [showViewMoreButton, setShowViewMoreButton] = useState(false);
 
+  const creatorImageContainsHttp = (image) => {
+    if (image.includes("http")) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const categories = [
     "All",
     "Automobile",
@@ -107,7 +115,7 @@ const Homepage = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={`${process.env.REACT_APP_API_URL}/${post?.image}`}
+                src={"http://localhost:5000/" + post?.image}
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
@@ -119,7 +127,11 @@ const Homepage = () => {
                   <div className="flex items-center gap-2">
                     <img
                       className="w-10 h-10 rounded-full object-cover"
-                      src={`${process.env.REACT_APP_API_URL}/${post?.createdBy?.image}`}
+                      src={
+                        creatorImageContainsHttp(post?.createdBy?.image)
+                          ? post?.createdBy?.image
+                          : "http://localhost:5000/" + post?.createdBy?.image
+                      }
                       alt="user"
                     />
                     <p className="font-semibold">{post?.createdBy?.email}</p>

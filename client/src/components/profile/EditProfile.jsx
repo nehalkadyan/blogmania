@@ -142,7 +142,7 @@ const EditProfile = () => {
                   ? imagePreview
                   : containsHttp
                   ? currentUser.image
-                  : `${process.env.REACT_APP_API_URL}/${currentUser.image}`
+                  : "http://localhost:5000/" + currentUser.image
               }
               alt="user"
             />
