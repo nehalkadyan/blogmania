@@ -10,7 +10,7 @@ const Homepage = () => {
   const [showViewMoreButton, setShowViewMoreButton] = useState(false);
 
   const creatorImageContainsHttp = (image) => {
-    if (image.includes("http")) {
+    if (image?.includes("http")) {
       return true;
     } else {
       return false;
