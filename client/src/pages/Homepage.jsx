@@ -17,6 +17,8 @@ const Homepage = () => {
     }
   };
 
+  const baseUrl = "https://blogmania-1.onrender.com";
+
   const categories = [
     "All",
     "Automobile",
@@ -115,7 +117,7 @@ const Homepage = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={`https://blogmania-1.onrender.com/${post?.image}`}
+                src={`${baseUrl}${post?.image}`}
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
