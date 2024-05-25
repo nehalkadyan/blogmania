@@ -116,7 +116,7 @@ const ViewPosts = () => {
                   <Link key={post._id} to={`/post/${post._id}`}>
                     <div>
                       <img
-                        src={"http://localhost:5000/" + post.image}
+                        src={"https://blogmania-1.onrender.com/" + post.image}
                         alt={post.title}
                         className="w-full h-48 object-cover rounded-t-lg"
                       />
