@@ -11,13 +11,8 @@ const SeparatePost = () => {
 
   const containsHttp = currentUser?.image.includes("http");
 
-<<<<<<< HEAD
   const commentImgContainsHTTp = (image) => {
     if (image?.includes("http")) {
-=======
-    const commentImgContainsHTTp = (image) => {
-    if (image.includes("http")) {
->>>>>>> origin/main
       return true;
     } else {
       return false;
@@ -48,10 +43,6 @@ const SeparatePost = () => {
     setUpdateComment(e.target.value);
   };
 
-   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -60,7 +51,7 @@ const SeparatePost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `https://blogmania-1.onrender.com/api/posts/post/${id}`,
+          `${process.env.REACT_APP_API_URL}/api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -95,7 +86,7 @@ const SeparatePost = () => {
   const handleCommentPublish = async () => {
     try {
       const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/${id}/comments`,
+        `${process.env.REACT_APP_API_URL}/api/posts/${id}/comments`,
         {
           method: "POST",
           headers: {
@@ -132,7 +123,7 @@ const SeparatePost = () => {
   const handleUpdateComment = async () => {
     try {
       const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/${id}/${commentIdToBeEdited}`,
+        `${process.env.REACT_APP_API_URL}/api/posts/${id}/${commentIdToBeEdited}`,
         {
           method: "PUT",
           headers: {
@@ -158,7 +149,7 @@ const SeparatePost = () => {
   const handleDeleteComment = async () => {
     try {
       const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/delete/${id}/${commentIdToBeDeleted}`,
+        `${process.env.REACT_APP_API_URL}/api/posts/delete/${id}/${commentIdToBeDeleted}`,
         {
           method: "DELETE",
         }
@@ -183,7 +174,7 @@ const SeparatePost = () => {
     }
     try {
       const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/${id}/like/postLike`,
+        `${process.env.REACT_APP_API_URL}/api/posts/${id}/like/postLike`,
         {
           method: "PUT",
           headers: {
@@ -238,11 +229,7 @@ const SeparatePost = () => {
       <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
       <div className="flex justify-center mb-4">
         <img
-<<<<<<< HEAD
           src={`http://localhost:5000/${post.image}`}
-=======
-          src={`https://blogmania-1.onrender.com/${post.image}`}
->>>>>>> origin/main
           alt={post.title}
           className="rounded-lg shadow-md"
         />
@@ -252,15 +239,9 @@ const SeparatePost = () => {
           <img
             className="w-10 h-10 rounded-full object-cover"
             src={
-<<<<<<< HEAD
               commentImgContainsHTTp(post?.createdBy?.image)
                 ? post?.createdBy?.image
                 : `http://localhost:5000/${post?.createdBy?.image}`
-=======
-              containsHttp
-                ? currentUser?.image
-                : `https://blogmania-1.onrender.com/${post?.createdBy?.image}`
->>>>>>> origin/main
             }
             alt={post.createdBy?.email}
           />
@@ -319,15 +300,11 @@ const SeparatePost = () => {
             <div key={comment._id} className="mb-4">
               <div className="flex items-center mb-2">
                 <img
-<<<<<<< HEAD
                   src={
                     commentImgContainsHTTp(comment?.userImg)
                       ? comment?.userImg
                       : `http://localhost:5000/${comment.userImg}`
                   }
-=======
-                  src={commentImgContainsHTTp(comment?.userImg) ? comment?.userImg : `https://blogmania-1.onrender.com/${comment.userImg}`}
->>>>>>> origin/main
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
                 />
@@ -344,10 +321,6 @@ const SeparatePost = () => {
                 <div>
                   {currentUser?.email === comment.createdBy && (
                     <div className="flex items-center space-x-2">
-<<<<<<< HEAD
-=======
-                    
->>>>>>> origin/main
                       {commentIdToBeEdited === comment._id ? (
                         <div className="w-full">
                           <textarea
