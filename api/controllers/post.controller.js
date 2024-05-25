@@ -1,17 +1,23 @@
 const Post = require("../models/PostModel");
+const fs = require("fs");
 
 module.exports.createPost = async (req, res) => {
   const { title, description, category, caption } = req.body;
   console.log("body", req.body);
 
   const userId = req.user.id;
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
+  const newPath = path + "." + ext;
+  fs.renameSync(path, newPath);
 
   try {
     const newPost = new Post({
       title,
       description,
       category,
-      image: req.file.path,
+      image: newPath,
       caption,
       createdBy: userId,
     });
@@ -30,6 +36,11 @@ module.exports.createPost = async (req, res) => {
 module.exports.updatePost = async (req, res) => {
   const { title, description, category, image, caption } = req.body;
   const { postId } = req.params;
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
+  const newPath = path + "." + ext;
+  fs.renameSync(path, newPath);
 
   try {
     const post = await Post.findById(postId);
@@ -47,7 +58,7 @@ module.exports.updatePost = async (req, res) => {
     }
 
     if (req.file) {
-      post.image = req.file.path;
+      post.image = newPath;
     } else {
       post.image = image;
     }

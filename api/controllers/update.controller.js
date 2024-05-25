@@ -1,9 +1,16 @@
 const bcryptjs = require("bcryptjs");
 const User = require("../models/UserModel");
+const fs = require("fs");
 
 module.exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { username, password, image } = req.body;
+
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
+  const newPath = path + "." + ext;
+  fs.renameSync(path, newPath);
   try {
     const user = await User.findById(id);
 
@@ -12,7 +19,7 @@ module.exports.updateUser = async (req, res) => {
     }
 
     if (req.file) {
-      user.image = req.file.path;
+      user.image = newPath;
     } else {
       user.image = image;
     }
