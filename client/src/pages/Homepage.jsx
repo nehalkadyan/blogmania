@@ -115,7 +115,7 @@ const Homepage = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={"https://blogmania-1.onrender.com/" + post?.image}
+                src={post?.image}
                 alt={post.title}
                 className="w-full h-48 object-cover"
               />
@@ -130,7 +130,7 @@ const Homepage = () => {
                       src={
                         creatorImageContainsHttp(post?.createdBy?.image)
                           ? post?.createdBy?.image
-                          : "https://blogmania-1.onrender.com/" + post?.createdBy?.image
+                          : post?.createdBy?.image
                       }
                       alt="user"
                     />
