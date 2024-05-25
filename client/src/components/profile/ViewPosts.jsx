@@ -17,7 +17,7 @@ const ViewPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/posts/post`,
+          `https://blogmania-1.onrender.com/api/posts/post`,
           {
             method: "GET",
             credentials: "include",
@@ -38,7 +38,7 @@ const ViewPosts = () => {
     const fetchPosts = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/posts/post`,
+          `https://blogmania-1.onrender.com/api/posts/post`,
           {
             method: "GET",
             credentials: "include",
@@ -63,7 +63,7 @@ const ViewPosts = () => {
   const handleDeletePost = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${postIdToBeDeleted}/delete`,
+        `https://blogmania-1.onrender.com/api/posts/${postIdToBeDeleted}/delete`,
         {
           method: "DELETE",
           credentials: "include",
