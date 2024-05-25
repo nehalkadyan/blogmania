@@ -17,7 +17,7 @@ const Homepage = () => {
     }
   };
 
-  const baseUrl = "https://blogmania-1.onrender.com";
+  const baseUrl = "https://blogmania-1.onrender.com/";
 
   const categories = [
     "All",
