@@ -71,7 +71,7 @@ const Navbar = () => {
                     src={
                       containsHttp
                         ? currentUser?.image
-                        : "http://localhost:5000/" + currentUser?.image
+                        : "https://blogmania-1.onrender.com/" + currentUser?.image
                     }
                     alt="user"
                   />
@@ -154,7 +154,7 @@ const Navbar = () => {
                     src={
                       containsHttp
                         ? currentUser?.image
-                        : "http://localhost:5000/" + currentUser?.image
+                        : "https://blogmania-1.onrender.com/" + currentUser?.image
                     }
                     alt="user"
                   />
