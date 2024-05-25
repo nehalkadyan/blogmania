@@ -229,7 +229,7 @@ const SeparatePost = () => {
       <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
       <div className="flex justify-center mb-4">
         <img
-          src={'https://blogmania-1.onrender.com/' + post?.image}
+          src={'https://blogmania-1.onrender.com/'+ post?.image}
           alt={post.title}
           className="rounded-lg shadow-md"
         />
@@ -241,7 +241,7 @@ const SeparatePost = () => {
             src={
               commentImgContainsHTTp(post?.createdBy?.image)
                 ? post?.createdBy?.image
-                : 'https://blogmania-1.onrender.com/' + post?.createdBy?.image`
+                : 'https://blogmania-1.onrender.com/' + post?.createdBy?.image
             }
             alt={post.createdBy?.email}
           />
@@ -303,7 +303,7 @@ const SeparatePost = () => {
                   src={
                     commentImgContainsHTTp(comment?.userImg)
                       ? comment?.userImg
-                      : 'https://blogmania-1.onrender.com/' + comment?.userImg`
+                      : 'https://blogmania-1.onrender.com/' + comment?.userImg
                   }
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
