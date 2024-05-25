@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { verifyUser } = require("../utils/verifyUser");
-const upload = require("../upload");
+const multer = require("multer");
+const upload = multer({dest : "../upload"});
 const { createPost } = require("../controllers/post.controller");
 const { getUserPosts } = require("../controllers/post.controller");
 const { getPost } = require("../controllers/post.controller");

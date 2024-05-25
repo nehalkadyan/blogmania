@@ -39,7 +39,7 @@ const EditPost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/posts/post/${id}`,
+          `https://blogmania-1.onrender.com/api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -126,7 +126,7 @@ const EditPost = () => {
       formDataToSend.append("image", formData.image);
       formDataToSend.append("caption", formData.caption);
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/posts/${id}/update`,
+        `https://blogmania-1.onrender.com/api/posts/${id}/update`,
         {
           method: "PUT",
           body: formDataToSend,
@@ -235,7 +235,11 @@ const EditPost = () => {
               src={
                 secondPreview
                   ? secondPreview
+<<<<<<< HEAD
                   : "http://localhost:5000/" + imagePreview
+=======
+                  : `https://blogmania-1.onrender.com/${imagePreview}`
+>>>>>>> origin/main
               }
               alt="Selected"
               className="mt-2 max-w-full h-auto"
