@@ -1,16 +1,16 @@
 const bcryptjs = require("bcryptjs");
 const User = require("../models/UserModel");
-const fs = require("fs");
+// const fs = require("fs");
 
 module.exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { username, password, image } = req.body;
+  const { username, password } = req.body;
 
-  const { originalname, path } = req.file;
-  const parts = originalname.split(".");
-  const ext = parts[parts.length - 1];
-  const newPath = path + "." + ext;
-  fs.renameSync(path, newPath);
+  // const { originalname, path } = req.file;
+  // const parts = originalname.split(".");
+  // const ext = parts[parts.length - 1];
+  // const newPath = path + "." + ext;
+  // fs.renameSync(path, newPath);
   try {
     const user = await User.findById(id);
 
@@ -18,11 +18,11 @@ module.exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (req.file) {
-      user.image = newPath;
-    } else {
-      user.image = image;
-    }
+    // if (req.file) {
+    //   user.image = newPath;
+    // } else {
+    //   user.image = image;
+    // }
 
     if (username) {
       user.username = username;
