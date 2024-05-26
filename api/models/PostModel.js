@@ -55,7 +55,7 @@ const postSchema = new mongoose.Schema(
         },
         userImg: {
           type: String,
-          required: true,
+       
         },
       },
     ],
