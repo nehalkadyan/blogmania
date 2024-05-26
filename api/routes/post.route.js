@@ -14,7 +14,7 @@ const { updatePost } = require("../controllers/post.controller");
 const { deletePost } = require("../controllers/post.controller");
 const { getAllPosts } = require("../controllers/post.controller");
 
-router.post("/create", verifyUser,  createPost);
+router.post("/create", verifyUser, createPost);
 router.get("/post", verifyUser, getUserPosts);
 router.put("/:postId/update", verifyUser, updatePost);
 router.delete("/:postId/delete", verifyUser, deletePost);
