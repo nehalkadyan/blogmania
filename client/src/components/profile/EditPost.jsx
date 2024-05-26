@@ -123,7 +123,6 @@ const EditPost = () => {
       formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("category", formData.category);
-      formDataToSend.append("image", formData.image);
       formDataToSend.append("caption", formData.caption);
       const res = await fetch(
         `https://blogmania-1.onrender.com/api/posts/${id}/update`,
