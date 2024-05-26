@@ -125,7 +125,6 @@ const CreatePost = ({ setActiveTab }) => {
       <h2 className="text-2xl font-bold mb-4">Create Post</h2>
       <form
         onSubmit={handleSubmit}
-        encType="multipart/form-data"
         className="space-y-4"
       >
         <div>
