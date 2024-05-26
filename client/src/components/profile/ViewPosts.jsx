@@ -115,11 +115,11 @@ const ViewPosts = () => {
                 <div className="bg-white rounded-lg shadow-lg">
                   <Link key={post._id} to={`/post/${post._id}`}>
                     <div>
-                      <img
+{/*                       <img
                         src={"https://blogmania-1.onrender.com/" + post.image}
                         alt={post.title}
                         className="w-full h-48 object-cover rounded-t-lg"
-                      />
+                      /> */}
                       <div className="p-4">
                         <h3 className="text-lg font-semibold">{post.title}</h3>
                       </div>
