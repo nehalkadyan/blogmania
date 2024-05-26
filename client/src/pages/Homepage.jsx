@@ -116,18 +116,18 @@ const Homepage = () => {
               key={post._id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <img
+{/*               <img
                 src={`https://blogmania-1.onrender.com/${post?.image}`}
                 alt={post.title}
                 className="w-full h-48 object-cover"
-              />
+              /> */}
               <div className="p-4">
                 <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <div className="text-gray-600">Created by :</div>
                   <div className="flex items-center gap-2">
-                    <img
+{/*                     <img
                       className="w-10 h-10 rounded-full object-cover"
                       src={
                         creatorImageContainsHttp(post?.createdBy?.image)
@@ -135,7 +135,7 @@ const Homepage = () => {
                           : `https://blogmania-1.onrender.com/${post?.createdBy?.image}`
                       }
                       alt="user"
-                    />
+                    /> */}
                     <p className="font-semibold">{post?.createdBy?.email}</p>
                   </div>
                 </div>
