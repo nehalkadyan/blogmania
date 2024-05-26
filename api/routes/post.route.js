@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { verifyUser } = require("../utils/verifyUser");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+// const multer = require("multer");
+// const upload = multer({ dest: "uploads/" });
 const { createPost } = require("../controllers/post.controller");
 const { getUserPosts } = require("../controllers/post.controller");
 const { getPost } = require("../controllers/post.controller");
@@ -14,9 +14,9 @@ const { updatePost } = require("../controllers/post.controller");
 const { deletePost } = require("../controllers/post.controller");
 const { getAllPosts } = require("../controllers/post.controller");
 
-router.post("/create", verifyUser, upload.single("image"), createPost);
+router.post("/create", verifyUser,  createPost);
 router.get("/post", verifyUser, getUserPosts);
-router.put("/:postId/update", verifyUser, upload.single("image"), updatePost);
+router.put("/:postId/update", verifyUser, updatePost);
 router.delete("/:postId/delete", verifyUser, deletePost);
 router.get("/allposts", getAllPosts);
 router.get("/post/:id", getPost);
