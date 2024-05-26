@@ -214,7 +214,7 @@ const EditPost = () => {
             ))}
           </select>
         </div>
-        <div>
+{/*         <div>
           <label htmlFor="image" className="block font-medium">
             Image
           </label>
@@ -241,7 +241,7 @@ const EditPost = () => {
               className="mt-2 max-w-full h-auto"
             />
           )}{" "}
-        </div>
+        </div> */}
         <div>
           <label htmlFor="caption" className="block font-medium">
             Caption
