@@ -66,7 +66,7 @@ const Navbar = () => {
                   }`}
                 >
                   Profile
-                  <img
+{/*                   <img
                     className="object-cover w-8 h-8 rounded-full ml-2 "
                     src={
                       containsHttp
@@ -74,7 +74,7 @@ const Navbar = () => {
                         : `https://blogmania-1.onrender.com/${currentUser?.image}`
                     }
                     alt="user"
-                  />
+                  /> */}
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -149,7 +149,7 @@ const Navbar = () => {
                   Profile
                 </Link>
                 <Link className="flex justify-center items-center text-white hover:text-gray-300 py-2 ">
-                  <img
+{/*                   <img
                     className="object-cover w-8 h-8 rounded-full ml-2"
                     src={
                       containsHttp
@@ -157,7 +157,7 @@ const Navbar = () => {
                         : `https://blogmania-1.onrender.com/${currentUser?.image}`
                     }
                     alt="user"
-                  />
+                  /> */}
                 </Link>
                 <button
                   onClick={handleLogout}
