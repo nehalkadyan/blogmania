@@ -74,16 +74,18 @@ const EditProfile = () => {
     try {
       setError(null);
       setLoading(true);
-      const formDataToSend = new FormData();
 
-      formDataToSend.append("username", formData.username);
-      formDataToSend.append("image", formData.image);
-      formDataToSend.append("password", formData.password);
       const res = await fetch(
         `https://blogmania-1.onrender.com/api/update/users/${id}`,
         {
           method: "PUT",
-          body: formDataToSend,
+          headers : {
+            "Content-Type" : "application/json",
+          },
+          body: JSON.stringify({
+            username : formData.username,
+            password : formData.password,
+          }),
           credentials: "include",
         }
       );
@@ -127,7 +129,6 @@ const EditProfile = () => {
       <div className="mt-4 w-full md:max-w-md">
         <form
           onSubmit={handleUpdateProfile}
-          encType="multipart/form-data"
           className="p-6 bg-white rounded-md shadow-md flex flex-col gap-4"
         >
 {/*           <h4 className="text-sm">Click the photo to change**</h4> */}
