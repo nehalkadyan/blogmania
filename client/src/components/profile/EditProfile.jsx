@@ -130,8 +130,8 @@ const EditProfile = () => {
           encType="multipart/form-data"
           className="p-6 bg-white rounded-md shadow-md flex flex-col gap-4"
         >
-          <h4 className="text-sm">Click the photo to change**</h4>
-          <label
+{/*           <h4 className="text-sm">Click the photo to change**</h4> */}
+{/*           <label
             htmlFor="imageInput"
             className="cursor-pointer flex justify-center"
           >
@@ -154,7 +154,7 @@ const EditProfile = () => {
             accept="image/*"
             onChange={handleImageChange}
             className="hidden"
-          />
+          /> */}
           <label>
             Email <span className="text-red-600">(can't be changed)</span>
           </label>
