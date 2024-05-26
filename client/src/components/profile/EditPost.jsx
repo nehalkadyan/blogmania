@@ -102,13 +102,13 @@ const EditPost = () => {
       return;
     }
 
-    if (!formData.image) {
-      setFormDataValidation({
-        ...formDataValidation,
-        imageValidation: "image must be provided in jpg, png, jpeg, etc format",
-      });
-      return;
-    }
+    // if (!formData.image) {
+    //   setFormDataValidation({
+    //     ...formDataValidation,
+    //     imageValidation: "image must be provided in jpg, png, jpeg, etc format",
+    //   });
+    //   return;
+    // }
 
     if (formData.caption.length < 12) {
       setFormDataValidation({
