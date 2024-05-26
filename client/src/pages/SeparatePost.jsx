@@ -226,15 +226,15 @@ const SeparatePost = () => {
       </div>
       <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
       <div className="flex justify-center mb-4">
-        <img
+{/*         <img
           src={`https://blogmania-1.onrender.com/${post?.image}`}
           alt={post.title}
           className="rounded-lg shadow-md"
-        />
+        /> */}
       </div>
       <div>
         <div className="flex gap-2 items-center">
-          <img
+{/*           <img
             className="w-10 h-10 rounded-full object-cover"
             src={
               commentImgContainsHTTp(post?.createdBy?.image)
@@ -242,7 +242,7 @@ const SeparatePost = () => {
                 : `https://blogmania-1.onrender.com/${post?.createdBy?.image}`
             }
             alt={post.createdBy?.email}
-          />
+          /> */}
           <p className="font-semibold">{post.createdBy?.email}</p>
         </div>
         <p className="text-gray-700 p-4">{post.caption}</p>
@@ -297,7 +297,7 @@ const SeparatePost = () => {
           {comments.map((comment) => (
             <div key={comment._id} className="mb-4">
               <div className="flex items-center mb-2">
-                <img
+{/*                 <img
                   src={
                     commentImgContainsHTTp(comment?.userImg)
                       ? comment?.userImg
@@ -305,7 +305,7 @@ const SeparatePost = () => {
                   }
                   alt={comment.createdBy}
                   className="w-8 h-8 rounded-full mr-2"
-                />
+                /> */}
                 <p className="text-gray-800 font-semibold">
                   {comment.createdBy}
                 </p>
