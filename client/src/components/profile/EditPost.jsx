@@ -119,16 +119,19 @@ const EditPost = () => {
     }
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("title", formData.title);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("category", formData.category);
-      formDataToSend.append("caption", formData.caption);
       const res = await fetch(
         `https://blogmania-1.onrender.com/api/posts/${id}/update`,
         {
           method: "PUT",
-          body: formDataToSend,
+          headers : {
+            "Content-Type" : "application/json",
+          },
+          body: JSON.stringify({
+            title : formData.title,
+            description : formData.description,
+            category : formData.category,
+            caption : formData.caption
+          }),
           credentials: "include",
         }
       );
