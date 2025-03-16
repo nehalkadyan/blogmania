@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { FaSignInAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signInSuccessful } from "../redux/user/userSlice";
+import toast from "react-hot-toast";
 
 const Signin = () => {
-  const [error, setError] = useState(null);
+  const {darkMode} = useSelector((state) => state.darkmode);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const [validation, setValidation] = useState({
-    emailValidation: "",
-    passwordValidation: "",
-  });
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  console.log(formData);
 
   const handleFormDataChange = (e) => {
     setFormData({
@@ -34,107 +29,147 @@ const Signin = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (formData.email.length < 8) {
-        setValidation({
-          ...validation,
-          emailValidation: "email must have atleast 8 characters",
-        });
-        return;
-      }
 
-      if (formData.password.length < 4) {
-        setValidation({
-          ...validation,
-          passwordValidation: "password must have atleast 4 characters",
-        });
-        return;
-      }
+    // Basic validation
+    if (formData.email.length < 8) {
+      toast.error("Email must have at least 8 characters");
+      return;
+    }
+
+    if (formData.password.length < 4) {
+      toast.error("Password must have at least 4 characters");
+      return;
+    }
+
+    try {
       setLoading(true);
-      setError(null);
-      const res = await fetch(
-        `api/auth/signin`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-          credentials: "include",
-        }
-      );
-      setLoading(false);
+      const res = await fetch(`http://localhost:5000/api/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
       const data = await res.json();
 
-      if (res.ok) {
-        navigate("/");
-        dispatch(signInSuccessful(data));
+      if (!res.ok) {
+        setLoading(false);
+        return toast.error(data.message || "Invalid login credentials");
       }
+
+      setLoading(false);
+      toast.success("You are logged in!");
+      dispatch(signInSuccessful(data));
+      navigate("/");
     } catch (err) {
       setLoading(false);
-      setError(err.message);
-      console.log(err);
+      toast.error(err.message);
     }
   };
 
   return (
-    <div className=" bg-slate-900 min-h-screen flex-col sm:flex-row flex justify-center items-center">
-      <div className="flex flex-col sm:flex-row w-[80%] items-center justify-center sm:justify-around">
-        <div className="sm:w-1/2">
-          <h1 className="text-white text-3xl sm:text-5xl">
+    <div
+      className={`min-h-screen flex items-center justify-center px-4 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      <div className="w-full max-w-4xl flex flex-col md:flex-row items-center gap-12">
+        {/* Left Section */}
+        <div className="text-center md:text-left md:w-1/2">
+          <h1 className="text-4xl font-extrabold mb-4 leading-tight">
             It's time to boost your creativity
           </h1>
-          <div className="mt-8 mb-10 sm:mb-0">
-            <h1 className="text-white text-lg">Not a member yet?</h1>
-            <div className=" text-white">
-              <Link to="/signup" className="flex items-center">
-                <h1 className="text-md mr-2">Sign Up</h1>
-                <FaSignInAlt className="mt-1" />
-              </Link>
-            </div>
+          <p className="text-lg opacity-80 mb-6">
+            Unlock a world of possibilities by signing in!
+          </p>
+          <div className="flex items-center gap-2 justify-center md:justify-start">
+            <p className="text-md">Not a member yet?</p>
+            <Link
+              to="/signup"
+              className="text-blue-500 hover:text-blue-400 transition duration-200 flex items-center"
+            >
+              <span className="mr-1">Sign Up</span>
+              <FaSignInAlt />
+            </Link>
           </div>
         </div>
 
-        <div>
-          <form
-            onSubmit={handleFormSubmit}
-            className="flex gap-5 rounded-md flex-col p-10 sm:14 md:p-20 bg-white"
-          >
-            <h1 className="text-2xl font-semibold">Sign In</h1>
+        {/* Right Section (Signin Form) */}
+        <div
+          className={`w-full md:w-1/2 p-8 rounded-lg shadow-lg ${
+            darkMode ? "bg-gray-800" : "bg-white"
+          }`}
+        >
+          <h2 className="text-2xl font-semibold mb-6">Sign In to your account</h2>
 
-            <input
-              type="email"
-              name="email"
-              onChange={handleFormDataChange}
-              className="border border-gray-200 p-2 outline-none"
-              placeholder="Email"
-            />
+          <form onSubmit={handleFormSubmit} className="space-y-5">
+            {/* Email */}
+            <div>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleFormDataChange}
+                className={`w-full p-3 rounded-md border focus:outline-none transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 focus:border-blue-500"
+                    : "bg-gray-50 border-gray-300 focus:border-blue-500"
+                }`}
+                placeholder="Email"
+                aria-label="Email"
+                required
+              />
+            </div>
 
-            {validation.emailValidation && (
-              <p className="text-sm text-red-600 text-center">
-                {validation.emailValidation}
-              </p>
-            )}
-            <input
-              type="password"
-              name="password"
-              onChange={handleFormDataChange}
-              className="border border-gray-200 p-2 outline-none"
-              placeholder="Password"
-            />
-            {validation.passwordValidation && (
-              <p className="text-sm text-red-600 text-center">
-                {validation.passwordValidation}
-              </p>
-            )}
+            {/* Password */}
+            <div>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleFormDataChange}
+                className={`w-full p-3 rounded-md border focus:outline-none transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 focus:border-blue-500"
+                    : "bg-gray-50 border-gray-300 focus:border-blue-500"
+                }`}
+                placeholder="Password"
+                aria-label="Password"
+                required
+              />
+            </div>
+
+            {/* Sign In Button */}
             <button
-              className="font-medium bg-slate-900 p-2 rounded-full text-white"
               type="submit"
+              className={`w-full p-3 rounded-md text-white font-medium transition ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+              disabled={loading}
             >
-              {loading ? "Loading..." : "Login account"}
+              {loading ? "Signing In..." : "Login Account"}
             </button>
           </form>
-          {error && <div>{error}</div>}
+
+          {/* Divider */}
+          <div className="mt-6 border-t border-gray-300" />
+
+          {/* Sign up Link */}
+          <div className="mt-6 text-center">
+            <p>
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-blue-500 hover:text-blue-400 transition"
+              >
+                Sign up here.
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

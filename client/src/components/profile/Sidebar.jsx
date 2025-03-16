@@ -1,43 +1,39 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
+  const {darkMode} = useSelector((state) => state.darkmode);
+
   const handleActiveTabChange = (index) => {
     setActiveTab(index);
   };
 
+  const tabs = ["Profile", "View all Posts", "Create Post"];
+
   return (
-    <div>
-      <ul className="p-12 flex flex-col gap-4">
-        <li
-          onClick={() => handleActiveTabChange(0)}
-          className={`${
-            activeTab === 0
-              ? " bg-gray-100 text-xl font-semibold cursor-pointer text-center p-2 rounded border border-gray-300"
-              : "text-xl font-semibold cursor-pointer text-center p-2  rounded border border-gray-200 hover:bg-gray-100"
-          }`}
-        >
-          Profile
-        </li>
-        <li
-          onClick={() => handleActiveTabChange(1)}
-          className={`${
-            activeTab === 1
-              ? " bg-gray-100 text-xl font-semibold cursor-pointer text-center p-2 rounded border border-gray-300"
-              : "text-xl font-semibold cursor-pointer text-center p-2 rounded border border-gray-200 hover:bg-gray-100"
-          }`}
-        >
-          View all Posts
-        </li>
-        <li
-          onClick={() => handleActiveTabChange(2)}
-          className={`${
-            activeTab === 2
-              ? " bg-gray-100 text-xl font-semibold cursor-pointer text-center p-2 rounded border border-gray-300"
-              : "text-xl font-semibold cursor-pointer text-center p-2 rounded border border-gray-200 hover:bg-gray-100"
-          }`}
-        >
-          Create Post
-        </li>
+    <div
+      className={`w-full h-full p-6 rounded-lg shadow-md transition-all ${
+        darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+      }`}
+    >
+      <ul className="flex flex-col gap-4">
+        {tabs.map((tab, index) => (
+          <li
+            key={index}
+            onClick={() => handleActiveTabChange(index)}
+            className={`text-lg font-semibold cursor-pointer text-center p-3 rounded-lg border transition-all duration-300 ${
+              activeTab === index
+                ? darkMode
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-gray-200 border-gray-400 text-gray-900"
+                : darkMode
+                ? "hover:bg-gray-700 hover:border-gray-600 border-gray-700 text-gray-400"
+                : "hover:bg-gray-100 hover:border-gray-300 border-gray-300 text-gray-600"
+            }`}
+          >
+            {tab}
+          </li>
+        ))}
       </ul>
     </div>
   );

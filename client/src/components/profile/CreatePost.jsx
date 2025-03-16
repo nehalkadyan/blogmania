@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const CreatePost = ({ setActiveTab }) => {
+  const {darkMode} = useSelector((state) => state.darkmode);
+
   const categories = [
     "All",
     "Automobile",
@@ -19,91 +23,76 @@ const CreatePost = ({ setActiveTab }) => {
     caption: "",
   });
 
-  const [formDataValidation, setFormDataValidation] = useState({
-    titleValidation: "",
-    descriptionValidation: "",
-    imageValidation: "",
-    captionValidation: "",
-  });
 
-  console.log(formDataValidation);
-
-  console.log(formData);
   const [imagePreview, setImagePreview] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log(imagePreview);
+  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageChange = async (e) => {
+  // Handle image change and preview
+  const handleImageChange = (e) => {
     const selectedFile = e.target.files[0];
-
-    try {
+    if (selectedFile) {
       setFormData({
         ...formData,
         image: selectedFile,
       });
       setImagePreview(URL.createObjectURL(selectedFile));
-    } catch (err) {
-      console.log(err);
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (formData.title.length < 2) {
-      setFormDataValidation({
-        ...formDataValidation,
-        titleValidation: "title should contain atleast 2 characters",
-      });
+      toast.error("Title should contain at least 2 characters")
+      setIsLoading(false);
       return;
     }
 
     if (formData.description.length < 8) {
-      setFormDataValidation({
-        ...formDataValidation,
-        descriptionValidation:
-          "description should contain atleast 8 characters",
-      });
+      toast.error("Description should contain at least 8 characters")
+      setIsLoading(false);
       return;
     }
 
-    // if (!formData.image) {
-    //   setFormDataValidation({
-    //     ...formDataValidation,
-    //     imageValidation: "image must be provided in jpg, png, jpeg, etc format",
-    //   });
-    //   return;
-    // }
+    if (!formData.image) {
+      toast.error("An image must be provided")
+      setIsLoading(false);
+      return;
+    }
 
     if (formData.caption.length < 12) {
-      setFormDataValidation({
-        ...formDataValidation,
-        captionValidation: "caption should contain atleast 12 characters",
-      });
+      toast.error("Caption should contain at least 12 characters")
+      setIsLoading(false);
       return;
     }
 
     try {
-      const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/create`,
-        {
-          method: "POST",
-          headers : {
-            "Content-Type" : "application/json",
-          },
-          body: JSON.stringify({
-            title : formData.title,
-            description : formData.description,
-            category : formData.category,
-            caption : formData.caption
-          }),
-          credentials: "include",
-        }
-      );
+      const postFormData = new FormData();
+      postFormData.append("title", formData.title);
+      postFormData.append("description", formData.description);
+      postFormData.append("category", formData.category);
+      postFormData.append("caption", formData.caption);
+      postFormData.append("image", formData.image);
+
+      const res = await fetch(`http://localhost:5000/api/posts/create`, {
+        method: "POST",
+        body: postFormData,
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if(!res.ok){
+        toast.error(data.message)
+      }
 
       if (res.ok) {
         setFormData({
@@ -112,71 +101,77 @@ const CreatePost = ({ setActiveTab }) => {
           category: "All",
           image: null,
           caption: "",
-          email: "",
         });
         setImagePreview("");
-        alert("post created");
+        toast.success("Post Created Successfully")
         setActiveTab(1);
+
+    
+      } else {
+        alert(data.message || "Failed to create post");
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      alert("An error occurred while creating the post");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-4">Create Post</h2>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
+    <div
+      className={`max-w-3xl mx-auto px-6 py-8 transition-all ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      <h2 className="text-3xl font-semibold mb-6">Create Post</h2>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Title */}
         <div>
-          <label htmlFor="title" className="block font-medium">
-            Title
-          </label>
+          <label className="block text-sm font-medium mb-1">Title</label>
           <input
             type="text"
-            id="title"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none transition ${
+              darkMode
+                ? "border-gray-700 bg-gray-800 text-white focus:border-blue-500"
+                : "border-gray-300 bg-white focus:border-blue-500"
+            }`}
           />
-          {formDataValidation.titleValidation && formData.title.length < 2 && (
-            <p className="text-red-700 text-sm pl-2">
-              {formDataValidation.titleValidation}
-            </p>
-          )}
+
         </div>
+
+        {/* Description */}
         <div>
-          <label htmlFor="description" className="block font-medium">
-            Description
-          </label>
+          <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
-            id="description"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
             rows="4"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
-          ></textarea>
-          {formDataValidation.descriptionValidation &&
-            formData.description.length < 8 && (
-              <p className="text-red-700 text-sm pl-2">
-                {formDataValidation.descriptionValidation}
-              </p>
-            )}
+            className={`w-full px-4 py-2 border rounded-lg resize-none focus:outline-none transition ${
+              darkMode
+                ? "border-gray-700 bg-gray-800 text-white focus:border-blue-500"
+                : "border-gray-300 bg-white focus:border-blue-500"
+            }`}
+          />
+ 
         </div>
+
+        {/* Category */}
         <div>
-          <label htmlFor="category" className="block font-medium">
-            Category
-          </label>
+          <label className="block text-sm font-medium mb-1">Category</label>
           <select
-            id="category"
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none transition ${
+              darkMode
+                ? "border-gray-700 bg-gray-800 text-white focus:border-blue-500"
+                : "border-gray-300 bg-white focus:border-blue-500"
+            }`}
           >
             {categories.map((category) => (
               <option key={category} value={category}>
@@ -185,54 +180,54 @@ const CreatePost = ({ setActiveTab }) => {
             ))}
           </select>
         </div>
-{/*         <div>
-          <label htmlFor="image" className="block font-medium">
-            Image
-          </label>
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Image</label>
           <input
             type="file"
-            id="image"
-            name="image"
             onChange={handleImageChange}
-            className="mt-1 text-sm sm:text-md"
+            accept="image/*"
+            className="block w-full text-sm"
           />
-          {formDataValidation.imageValidation && !formData.image && (
-            <p className="text-red-700 text-sm pl-2">
-              {formDataValidation.imageValidation}
-            </p>
-          )}
           {imagePreview && (
             <img
               src={imagePreview}
-              alt="Selected"
-              className="mt-2 max-w-full h-auto"
+              alt="Preview"
+              className="mt-2 rounded-lg shadow-lg max-h-48"
             />
-          )}{" "}
-        </div> */}
+          )}
+
+        </div>
+
+        {/* Caption */}
         <div>
-          <label htmlFor="caption" className="block font-medium">
-            Caption
-          </label>
+          <label className="block text-sm font-medium mb-1">Caption</label>
           <input
             type="text"
-            id="caption"
             name="caption"
             value={formData.caption}
             onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none transition ${
+              darkMode
+                ? "border-gray-700 bg-gray-800 text-white focus:border-blue-500"
+                : "border-gray-300 bg-white focus:border-blue-500"
+            }`}
           />
-          {formDataValidation.captionValidation &&
-            formData.caption.length < 12 && (
-              <p className="text-red-700 text-sm pl-2">
-                {formDataValidation.captionValidation}
-              </p>
-            )}
+
         </div>
+
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          className={`w-full px-4 py-2 rounded-lg text-white font-medium transition ${
+            isLoading
+              ? "bg-blue-400"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
+          disabled={isLoading}
         >
-          Create Post
+          {isLoading ? "Creating..." : "Create Post"}
         </button>
       </form>
     </div>

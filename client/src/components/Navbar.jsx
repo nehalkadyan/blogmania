@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { SunIcon, MoonIcon } from "lucide-react";
+import {useSelector, useDispatch} from "react-redux";
+import { toggleDarkMode } from "../redux/mode/modeSlice";
+
 import { userLogout } from "../redux/user/userSlice";
 
 const Navbar = () => {
+
+  const {darkMode} = useSelector((state) => state.darkmode)
+const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.user);
   const [isOpen, setIsOpen] = useState(false);
-
-  const dispatch = useDispatch();
 
   const handleLogout = () => {
     document.cookie =
@@ -16,7 +20,11 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
-  const containsHttp = currentUser?.image.includes("http");
+  
+    const toggleMode = () => {
+      dispatch(toggleDarkMode())
+    };
+
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -49,6 +57,13 @@ const Navbar = () => {
             </button>
           </div>
           <div className="hidden md:flex md:items-center md:space-x-8">
+                        <button 
+                          onClick={toggleMode} 
+                          className={`p-2 rounded-full ${darkMode ? "bg-gray-700 text-yellow-300" : "bg-gray-200 text-gray-700"} ml-4 transition-all duration-300 hover:scale-110`}
+                          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                        >
+                          {darkMode ? <SunIcon size={24} /> : <MoonIcon size={24} />}
+                        </button>
             <Link to="/about" className="text-white hover:text-gray-300">
               About
             </Link>
@@ -65,16 +80,13 @@ const Navbar = () => {
                       : "text-white hover:text-gray-300 flex items-center"
                   }`}
                 >
-                  Profile
-{/*                   <img
-                    className="object-cover w-8 h-8 rounded-full ml-2 "
+                  <img
+                    className="object-fill w-8 h-8 rounded-full ml-2 "
                     src={
-                      containsHttp
-                        ? currentUser?.image
-                        : `https://blogmania-1.onrender.com/${currentUser?.image}`
+                       currentUser?.image
                     }
                     alt="user"
-                  /> */}
+                  />
                 </Link>
                 <button
                   onClick={handleLogout}

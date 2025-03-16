@@ -13,10 +13,12 @@ const { postLike } = require("../controllers/post.controller");
 const { updatePost } = require("../controllers/post.controller");
 const { deletePost } = require("../controllers/post.controller");
 const { getAllPosts } = require("../controllers/post.controller");
+const upload = require("../middlewares/multer/multer");
+const uploadSingle = require("../middlewares/upload/uploadSingle");
 
-router.post("/create", verifyUser, createPost);
+router.post("/create", verifyUser, upload.single("image"), uploadSingle, createPost);
 router.get("/post", verifyUser, getUserPosts);
-router.put("/:postId/update", verifyUser, updatePost);
+router.put("/:postId/update", verifyUser, upload.single("image"), uploadSingle, updatePost);
 router.delete("/:postId/delete", verifyUser, deletePost);
 router.get("/allposts", getAllPosts);
 router.get("/post/:id", getPost);

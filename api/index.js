@@ -12,7 +12,7 @@ const path = require("path");
 dotenv.config();
 
 const corsOptions = {
-  origin: 'https://blogmania-1.onrender.com',
+  origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
@@ -60,6 +60,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log("server is listening on port 5000");
 });

@@ -1,181 +1,192 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Modal from "../Modal";
 import Loader from "../Loader";
 import { FaThList } from "react-icons/fa";
 import { IoGrid } from "react-icons/io5";
+import toast from "react-hot-toast";
+import { FaRegSadCry } from "react-icons/fa"; // Importing an icon
 
-const ViewPosts = () => {
+const ViewPosts = ({setActiveTab}) => {
   const [userPosts, setUserPosts] = useState([]);
   const [postIdToBeDeleted, setPostIdToBeDeleted] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [biggerView, setBiggerView] = useState("default");
+  const [viewMode, setViewMode] = useState("default");
 
-  console.log("userposts", userPosts);
+  const { darkMode } = useSelector((state) => state.darkmode);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(
-          `https://blogmania-1.onrender.com/api/posts/post`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`http://localhost:5000/api/posts/post`, {
+          method: "GET",
+          credentials: "include",
+        });
         if (res.ok) {
           const data = await res.json();
           setUserPosts(data.posts);
         }
       } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchPosts();
-  });
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch(
-          `https://blogmania-1.onrender.com/api/posts/post`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setUserPosts(data.posts);
-        }
-      } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
     fetchPosts();
   }, [postIdToBeDeleted]);
 
-  const handleIdToDeleteChange = (id) => {
-    setPostIdToBeDeleted(id);
-    setShowModal(true);
-  };
-
+  // Handle post delete
   const handleDeletePost = async () => {
     try {
       const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/${postIdToBeDeleted}/delete`,
+        `http://localhost:5000/api/posts/${postIdToBeDeleted}/delete`,
         {
           method: "DELETE",
           credentials: "include",
         }
       );
-
       if (res.ok) {
+        setUserPosts(userPosts.filter((post) => post._id !== postIdToBeDeleted));
         setPostIdToBeDeleted(null);
         setShowModal(false);
-        return alert("post deleted!");
+        toast.success("Post deleted successfully");
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      toast.error(err.message);
     }
   };
 
-  const handleViewOption = (type) => {
-    setBiggerView(type);
-  };
+  // Toggle view mode
+  const handleViewModeChange = (mode) => setViewMode(mode);
 
   return (
-    <div className="max-w-4xl  min-h-screen mx-auto px-4 py-8">
-      <div className="flex items-center gap-4 p-2 mb-3">
-        <div>
+    <div
+      className={`max-w-6xl mx-auto px-6 py-10 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+      } transition-all duration-300`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-3xl font-bold">Your Posts</h2>
+        <div className="flex gap-3">
+          {/* List View */}
           <FaThList
-            onClick={() => handleViewOption("default")}
-            className="text-2xl cursor-pointer"
+            onClick={() => handleViewModeChange("default")}
+            className={`text-2xl cursor-pointer ${
+              viewMode === "default"
+                ? darkMode
+                  ? "text-blue-400 scale-110"
+                  : "text-blue-600 scale-110"
+                : "text-gray-400 hover:text-blue-500"
+            } transition-all`}
           />
-        </div>
-        <div>
+          {/* Grid View */}
           <IoGrid
-            onClick={() => handleViewOption("grid")}
-            className="text-2xl cursor-pointer"
+            onClick={() => handleViewModeChange("grid")}
+            className={`text-2xl cursor-pointer ${
+              viewMode === "grid"
+                ? darkMode
+                  ? "text-blue-400 scale-110"
+                  : "text-blue-600 scale-110"
+                : "text-gray-400 hover:text-blue-500"
+            } transition-all`}
           />
         </div>
       </div>
-      <h2 className="text-2xl font-bold mb-4">Your Posts</h2>
-      <div
-        className={`${
-          biggerView === "default"
-            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        }`}
-      >
-        {userPosts.length > 0 ? (
-          userPosts.map((post) => (
-            <>
-              <div>
-                <div className="bg-white rounded-lg shadow-lg">
-                  <Link key={post._id} to={`/post/${post._id}`}>
-                    <div>
-{/*                       <img
-                        src={"https://blogmania-1.onrender.com/" + post.image}
-                        alt={post.title}
-                        className="w-full h-48 object-cover rounded-t-lg"
-                      /> */}
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold">{post.title}</h3>
-                      </div>
-                    </div>
-                  </Link>
 
-                  <div
-                    className={`${
-                      biggerView === "default"
-                        ? "p-5 mt-4 flex justify-between items-center"
-                        : "p-2 flex justify-between items-center"
-                    }`}
-                  >
-                    <Link
-                      to={`/edit/${post._id}`}
-                      className={`${
-                        biggerView === "default"
-                          ? "px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                          : "p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                      }`}
-                    >
-                      Edit
-                    </Link>
-
-                    <div>
-                      <button
-                        onClick={() => handleIdToDeleteChange(post._id)}
-                        className={`${
-                          biggerView === "default"
-                            ? "px-4 py-2 bg-red-500 text-white rounded-md hover:red-blue-600"
-                            : "p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                        }`}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <div className={`${showModal ? "visible" : "hidden"}`}>
-                      <Modal
-                        action={handleDeletePost}
-                        text={"Post"}
-                        setShowModal={setShowModal}
-                      />
-                    </div>
-                  </div>
+      {/* Posts Grid */}
+      {userPosts.length > 0 ? (
+        <div
+          className={`grid ${
+            viewMode === "default"
+              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+              : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          } gap-6 transition-all duration-300`}
+        >
+          {userPosts.map((post) => (
+            <div
+              key={post._id}
+              className={`rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 ${
+                darkMode
+                  ? "bg-gray-800 hover:bg-gray-700"
+                  : "bg-white hover:bg-gray-100"
+              }`}
+            >
+              <Link to={`/post/${post._id}`}>
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold">{post.title}</h3>
                 </div>
+              </Link>
+
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center p-4">
+                {/* Edit Button */}
+                <Link
+                  to={`/edit/${post._id}`}
+                  className={`px-4 py-2 rounded-md font-medium ${
+                    darkMode
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  } text-white`}
+                >
+                  Edit
+                </Link>
+
+                {/* Delete Button */}
+                <button
+                  onClick={() => {
+                    setPostIdToBeDeleted(post._id);
+                    setShowModal(true);
+                  }}
+                  className={`px-4 py-2 rounded-md font-medium ${
+                    darkMode
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-red-500 hover:bg-red-600"
+                  } text-white`}
+                >
+                  Delete
+                </button>
               </div>
-            </>
-          ))
-        ) : userPosts?.length > 0 ? (
-          <Loader />
-        ) : (
-          <h1 className="md:text-2xl text-xl font-semibold mt-4">
-            You have not created any posts yet
-          </h1>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20">
+          {/* Sad Icon */}
+          <FaRegSadCry className="text-6xl text-gray-400 mb-4 animate-bounce" />
+          <h3 className="text-2xl font-semibold mb-4">
+            No posts created yet!
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Create your first post and start sharing your thoughts.
+          </p>
+          {/* Create Post Button */}
+          <Link
+            onClick={() => setActiveTab(2)}
+            className={`px-6 py-3 rounded-lg text-white font-semibold transition-all shadow-md ${
+              darkMode
+                ? "bg-blue-500 hover:bg-blue-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            Create Post
+          </Link>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showModal && (
+        <Modal
+          action={handleDeletePost}
+          text="post?"
+          setShowModal={setShowModal}
+        />
+      )}
     </div>
   );
 };

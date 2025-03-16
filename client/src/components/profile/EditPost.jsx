@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const EditPost = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { darkMode } = useSelector((state) => state.darkmode);
+
   const [post, setPost] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
-  const [secondPreview, setSecondPreview] = useState(null);
-  const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(false); // ✅ Loading state
 
   const categories = [
     "All",
@@ -23,23 +26,29 @@ const EditPost = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: post?.category,
-    image: "",
+    category: "",
+    image: null,
     caption: "",
   });
 
-  const [formDataValidation, setFormDataValidation] = useState({
-    titleValidation: "",
-    descriptionValidation: "",
-    imageValidation: "",
-    captionValidation: "",
-  });
+  // ✅ Handle image change and preview
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFormData({
+        ...formData,
+        image: selectedFile,
+      });
+      setImagePreview(URL.createObjectURL(selectedFile));
+    }
+  };
 
+  // ✅ Fetch Post Data
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `https://blogmania-1.onrender.com/api/posts/post/${id}`,
+          `http://localhost:5000/api/posts/post/${id}`,
           {
             method: "GET",
           }
@@ -49,94 +58,74 @@ const EditPost = () => {
           const data = await res.json();
           setPost(data.post);
           setImagePreview(data.post?.image);
+          setFormData({
+            title: data.post?.title || "",
+            description: data.post?.description || "",
+            category: data.post?.category || "",
+            image: null,
+            caption: data.post?.caption || "",
+          });
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
 
     fetchPost();
   }, [id]);
 
-  useEffect(() => {
-    if (Object.keys(post).length > 0) {
-      // Set initial state for formData once post data is available
-      setFormData({
-        title: post.title || "",
-        description: post.description || "",
-        category: post.category || "",
-        image: post.image || null,
-        caption: post.caption || "",
-      });
-    }
-  }, [post]);
-
+  // ✅ Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setFormData({ ...formData, image: file });
-    setSecondPreview(URL.createObjectURL(file));
-  };
-
+  // ✅ Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Prevent duplicate requests
+    if (loading) return;
+
+    // Basic validation
     if (formData.title.length < 2) {
-      setFormDataValidation({
-        ...formDataValidation,
-        titleValidation: "title should contain atleast 2 characters",
-      });
+      toast.error("Title should contain at least 2 characters.");
       return;
     }
 
     if (formData.description.length < 8) {
-      setFormDataValidation({
-        ...formDataValidation,
-        descriptionValidation:
-          "description should contain atleast 8 characters",
-      });
+      toast.error("Description should contain at least 8 characters.");
       return;
     }
 
-    // if (!formData.image) {
-    //   setFormDataValidation({
-    //     ...formDataValidation,
-    //     imageValidation: "image must be provided in jpg, png, jpeg, etc format",
-    //   });
-    //   return;
-    // }
-
     if (formData.caption.length < 12) {
-      setFormDataValidation({
-        ...formDataValidation,
-        captionValidation: "caption should contain atleast 12 characters",
-      });
+      toast.error("Caption should contain at least 12 characters.");
       return;
     }
 
     try {
-      const res = await fetch(
-        `https://blogmania-1.onrender.com/api/posts/${id}/update`,
-        {
-          method: "PUT",
-          headers : {
-            "Content-Type" : "application/json",
-          },
-          body: JSON.stringify({
-            title : formData.title,
-            description : formData.description,
-            category : formData.category,
-            caption : formData.caption
-          }),
-          credentials: "include",
-        }
-      );
+      setLoading(true); // ✅ Start loading
 
-      if (res.ok) {
+      const updatePostData = new FormData();
+      updatePostData.append("title", formData.title);
+      updatePostData.append("description", formData.description);
+      updatePostData.append("category", formData.category);
+      if (formData.image) {
+        updatePostData.append("image", formData.image);
+      }
+      updatePostData.append("caption", formData.caption);
+
+      const res = await fetch(`http://localhost:5000/api/posts/${id}/update`, {
+        method: "PUT",
+        body: updatePostData,
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message);
+      } else {
         setFormData({
           title: "",
           description: "",
@@ -145,130 +134,140 @@ const EditPost = () => {
           caption: "",
         });
         setImagePreview(null);
-        navigate(`/profile/${currentUser._id}`);
-        return alert("post edited");
+        toast.success("Post Updated!");
+        navigate(`/profile/${post.authorId}`);
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err.message);
+      console.error(err);
+    } finally {
+      setLoading(false); // ✅ Stop loading
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-4">Edit Post</h2>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
-        <div>
-          <label htmlFor="title" className="block font-medium">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
-          />
-          {formDataValidation.titleValidation && formData.title.length < 2 && (
-            <p className="text-red-700 text-sm pl-2">
-              {formDataValidation.titleValidation}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor="description" className="block font-medium">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows="4"
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
-          ></textarea>
-          {formDataValidation.descriptionValidation &&
-            formData.description.length < 8 && (
-              <p className="text-red-700 text-sm pl-2">
-                {formDataValidation.descriptionValidation}
-              </p>
-            )}
-        </div>
-        <div>
-          <label htmlFor="category" className="block font-medium">
-            Category
-          </label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
-          >
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-{/*         <div>
-          <label htmlFor="image" className="block font-medium">
-            Image
-          </label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageChange}
-            className="mt-1"
-          />
-          {formDataValidation.imageValidation && !formData.image && (
-            <p className="text-red-700 text-sm pl-2">
-              {formDataValidation.imageValidation}
-            </p>
-          )}
-          {imagePreview && (
-            <img
-              src={
-                secondPreview
-                  ? secondPreview
-                  : `https://blogmania-1.onrender.com/${imagePreview}` 
-              }
-              alt="Selected"
-              className="mt-2 max-w-full h-auto"
+    <div
+      className={`flex justify-center ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+      } transition-all duration-300`}
+    >
+      <div className="w-full py-10 shadow-lg max-w-5xl rounded-lg mx-auto px-8">
+        {/* Header */}
+        <h2 className="text-4xl font-extrabold mb-8 text-center">Edit Post</h2>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label htmlFor="title" className="block font-medium mb-2">
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg transition-all ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
             />
-          )}{" "}
-        </div> */}
-        <div>
-          <label htmlFor="caption" className="block font-medium">
-            Caption
-          </label>
-          <input
-            type="text"
-            id="caption"
-            name="caption"
-            value={formData.caption}
-            onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 mt-1"
-          />
-          {formDataValidation.captionValidation &&
-            formData.caption.length < 12 && (
-              <p className="text-red-700 text-sm pl-2">
-                {formDataValidation.captionValidation}
-              </p>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label htmlFor="description" className="block font-medium mb-2">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              rows="6"
+              className={`w-full px-4 py-3 border rounded-lg transition-all ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label htmlFor="category" className="block font-medium mb-2">
+              Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
+            >
+              {categories.map((category) => (
+                <option key={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Image Upload */}
+          <div>
+            <label className="block font-medium mb-2">Image</label>
+            <input
+              type="file"
+              onChange={handleImageChange}
+              accept="image/*"
+              className="block w-full text-sm border border-gray-300 rounded-lg"
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-4 h-60 rounded-lg shadow-lg object-contain"
+              />
             )}
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-        >
-          Edit Post
-        </button>
-      </form>
+          </div>
+
+          {/* Caption */}
+          <div>
+            <label htmlFor="caption" className="block font-medium mb-2">
+              Caption
+            </label>
+            <input
+              type="text"
+              id="caption"
+              name="caption"
+              value={formData.caption}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading} // ✅ Disable while loading
+            className={`w-full py-4 rounded-lg text-white font-semibold transition-all ${
+              darkMode
+                ? "bg-blue-600 hover:bg-blue-500"
+                : "bg-blue-500 hover:bg-blue-400"
+            } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            {loading ? "Updating..." : "Update Post"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

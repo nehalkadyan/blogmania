@@ -3,14 +3,11 @@ const User = require("../models/UserModel");
 // const fs = require("fs");
 
 module.exports.updateUser = async (req, res) => {
-  const { id } = req.params;
+  const id = req.user.id;
   const { username, password } = req.body;
 
-  // const { originalname, path } = req.file;
-  // const parts = originalname.split(".");
-  // const ext = parts[parts.length - 1];
-  // const newPath = path + "." + ext;
-  // fs.renameSync(path, newPath);
+  const imageUrl = req.imageUrl;
+
   try {
     const user = await User.findById(id);
 
@@ -18,11 +15,28 @@ module.exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // if (req.file) {
-    //   user.image = newPath;
-    // } else {
-    //   user.image = image;
-    // }
+    // check if the username is already taken
+
+    if (username) {
+      const existingUser = await User.aggregate([
+        {
+          $match: {
+            username: username, 
+            _id: { $ne: user._id } 
+          }
+        },
+        {
+          $limit: 1 
+        }
+      ]);
+
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Username already taken. Try a different username." });
+      }
+
+      user.username = username;
+    }
+
 
     if (username) {
       user.username = username;
@@ -31,6 +45,10 @@ module.exports.updateUser = async (req, res) => {
     if (password) {
       const hashedPass = await bcryptjs.hash(password, 10);
       user.password = hashedPass;
+    }
+
+    if(imageUrl){
+      user.image = imageUrl;
     }
 
     await user.save();

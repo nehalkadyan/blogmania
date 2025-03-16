@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const Signup = () => {
-  const [error, setError] = useState(null);
+  const {darkMode} = useSelector((state) => state.darkmode);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -11,15 +13,7 @@ const Signup = () => {
     password: "",
   });
 
-  const [validation, setValidation] = useState({
-    usernameValidation: "",
-    emailValidation: "",
-    passwordValidation: "",
-  });
-
   const navigate = useNavigate();
-
-  console.log(formData);
 
   const handleFormDataChange = (e) => {
     setFormData({
@@ -30,121 +24,167 @@ const Signup = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (formData.username.length < 4) {
+      toast.error("Username must have at least 4 characters");
+      return;
+    }
+    if (formData.email.length < 8) {
+      toast.error("Email must have at least 8 characters");
+      return;
+    }
+    if (formData.password.length < 4) {
+      toast.error("Password must have at least 4 characters");
+      return;
+    }
+
     try {
-      if (formData.username.length < 4) {
-        setValidation({
-          ...validation,
-          usernameValidation: "username must have atleast 4 characters",
-        });
-        return;
-      }
-
-      if (formData.email.length < 8) {
-        setValidation({
-          ...validation,
-          emailValidation: "email must have atleast 8 characters",
-        });
-        return;
-      }
-
-      if (formData.password.length < 4) {
-        setValidation({
-          ...validation,
-          passwordValidation: "password must have atleast 4 characters",
-        });
-        return;
-      }
       setLoading(true);
-      setError(null);
-      const res = await fetch(
-        `api/auth/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-      setLoading(false);
-      if (res.ok) {
-        navigate("/signin");
+      const res = await fetch(`http://localhost:5000/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!data.user) {
+        setLoading(false);
+        return toast.error("Username or email already exists!");
       }
+
+      setLoading(false);
+      toast.success("User successfully created!");
+      navigate("/signin");
     } catch (err) {
       setLoading(false);
-      setError(err.message);
+      toast.error(err.message);
       console.log(err);
     }
   };
 
   return (
-    <div className=" bg-slate-900 min-h-screen flex-col sm:flex-row flex justify-center items-center">
-      <div className="flex flex-col sm:flex-row w-[80%] items-center justify-center sm:justify-around">
-        <div className="sm:w-1/2">
-          <h1 className="text-white text-3xl sm:text-5xl">
+    <div
+      className={`min-h-screen flex items-center justify-center px-4 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"
+      }`}
+    >
+      <div className="w-full max-w-4xl flex flex-col md:flex-row items-center gap-12">
+        {/* Left Section */}
+        <div className="text-center md:text-left md:w-1/2">
+          <h1 className="text-4xl font-extrabold mb-4 leading-tight">
             It's time to boost your creativity
           </h1>
-          <div className="mt-8 mb-10 sm:mb-0">
-            <h1 className="text-white text-lg">Already a member?</h1>
-            <div className="  text-white">
-              <Link to="/signin" className="flex items-center">
-                <h1 className="text-md mr-2">Sign In</h1>
-                <FaSignInAlt className="mt-1" />
-              </Link>
-            </div>
+          <p className="text-lg opacity-80 mb-6">
+            Join our platform and explore endless possibilities!
+          </p>
+          <div className="flex items-center gap-2 justify-center md:justify-start">
+            <p className="text-md">Already a member?</p>
+            <Link
+              to="/signin"
+              className="text-blue-500 hover:text-blue-400 transition duration-200 flex items-center"
+            >
+              <span className="mr-1">Sign In</span>
+              <FaSignInAlt />
+            </Link>
           </div>
         </div>
 
-        <div>
-          <form
-            onSubmit={handleFormSubmit}
-            className="flex gap-3 rounded-md flex-col p-10 sm:14 md:p-20 bg-white"
-          >
-            <h1 className="text-2xl font-semibold">Sign up</h1>
-            <input
-              type="text"
-              name="username"
-              onChange={handleFormDataChange}
-              className="border border-gray-200 p-2 outline-none"
-              placeholder="Full Name"
-            />
-            {validation.usernameValidation && (
-              <p className="text-sm text-red-600 text-center">
-                {validation.usernameValidation}
-              </p>
-            )}
-            <input
-              type="email"
-              name="email"
-              onChange={handleFormDataChange}
-              className="border border-gray-200 p-2 outline-none"
-              placeholder="Email"
-            />
-            {validation.emailValidation && (
-              <p className="text-sm text-red-600 text-center">
-                {validation.emailValidation}
-              </p>
-            )}
-            <input
-              type="password"
-              name="password"
-              onChange={handleFormDataChange}
-              className="border border-gray-200 p-2 outline-none"
-              placeholder="Password"
-            />
-            {validation.passwordValidation && (
-              <p className="text-sm text-red-600 text-center">
-                {validation.passwordValidation}
-              </p>
-            )}
+        {/* Right Section (Signup Form) */}
+        <div
+          className={`w-full md:w-1/2 p-8 rounded-lg shadow-lg ${
+            darkMode ? "bg-gray-800" : "bg-white"
+          }`}
+        >
+          <h2 className="text-2xl font-semibold mb-6">Create your account</h2>
+
+          <form onSubmit={handleFormSubmit} className="space-y-5">
+            {/* Username */}
+            <div>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleFormDataChange}
+                className={`w-full p-3 rounded-md border focus:outline-none transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 focus:border-blue-500"
+                    : "bg-gray-50 border-gray-300 focus:border-blue-500"
+                }`}
+                placeholder="Username"
+                aria-label="Username"
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleFormDataChange}
+                className={`w-full p-3 rounded-md border focus:outline-none transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 focus:border-blue-500"
+                    : "bg-gray-50 border-gray-300 focus:border-blue-500"
+                }`}
+                placeholder="Email"
+                aria-label="Email"
+                required
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleFormDataChange}
+                className={`w-full p-3 rounded-md border focus:outline-none transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 focus:border-blue-500"
+                    : "bg-gray-50 border-gray-300 focus:border-blue-500"
+                }`}
+                placeholder="Password"
+                aria-label="Password"
+                required
+              />
+            </div>
+
+            {/* Signup Button */}
             <button
-              className="font-medium bg-slate-900 p-2 rounded-full text-white"
               type="submit"
+              className={`w-full p-3 rounded-md text-white font-medium transition ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+              disabled={loading}
             >
-              {loading ? "Loading..." : "Create account"}
+              {loading ? "Signing up..." : "Sign up"}
             </button>
           </form>
-          {error && <p>{error}</p>}
+
+          {/* Divider */}
+          <div className="mt-6 border-t border-gray-300" />
+
+          {/* Sign in Link */}
+          <div className="mt-6 text-center">
+            <p>
+              Already have an account?{" "}
+              <Link
+                to="/signin"
+                className="text-blue-500 hover:text-blue-400 transition"
+              >
+                Sign in here.
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

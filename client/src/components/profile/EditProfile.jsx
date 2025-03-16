@@ -3,32 +3,29 @@ import { useSelector, useDispatch } from "react-redux";
 import Modal from "../Modal";
 import { useParams, useNavigate } from "react-router-dom";
 import { updateUser, deleteUser } from "../../redux/user/userSlice";
+import toast from "react-hot-toast";
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
-  const containsHttp = currentUser.image.includes("http");
+  const {darkMode} = useSelector((state) => state.darkmode);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [imagePreview, setImagePreview] = useState(currentUser?.image);
+
   const [formData, setFormData] = useState({
-    image: currentUser?.image,
+    image: null,
     username: currentUser?.username,
     password: "",
     confirmPassword: "",
   });
 
-  const [formValidation, setFormValidation] = useState({
-    usernameValidation: "",
-    passwordValidation: "",
-    passwordLengthValidation: "",
-  });
 
-  const [imagePreview, setImagePreview] = useState("");
-
+  // Handle input change
   const handleFormDataChange = (e) => {
     setFormData({
       ...formData,
@@ -36,198 +33,204 @@ const EditProfile = () => {
     });
   };
 
+  // Handle image preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setFormData({
-      ...formData,
-      image: file,
-    });
-    setImagePreview(URL.createObjectURL(file));
+    if (file) {
+      setFormData({ ...formData, image: file });
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
+  // Handle form submission
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     if (formData.password !== formData.confirmPassword) {
-      setFormValidation({
-        ...formValidation,
-        passwordValidation: "passwords don't match",
-      });
+      toast.error("Passwords don't match")
+
+      setLoading(false);
       return;
     }
 
     if (formData.username.length < 4) {
-      setFormValidation({
-        ...formValidation,
-        usernameValidation: "username should at least have 4 characters",
-      });
-      return;
-    }
-
-    if (formData.password.length > 0 && formData.password.length < 4) {
-      setFormValidation({
-        ...formValidation,
-        passwordValidation: "password should have at least 4 characters",
-      });
+      toast.error("Username should have atleast 4 characters")
+      setLoading(false);
       return;
     }
 
     try {
-      setError(null);
-      setLoading(true);
+      const profileFormData = new FormData();
+      profileFormData.append("username", formData.username);
+      if (formData.password) profileFormData.append("password", formData.password);
+      if (formData.image) profileFormData.append("image", formData.image);
 
-      const res = await fetch(
-        `https://blogmania-1.onrender.com/api/update/users/${id}`,
-        {
-          method: "PUT",
-          headers : {
-            "Content-Type" : "application/json",
-          },
-          body: JSON.stringify({
-            username : formData.username,
-            password : formData.password,
-          }),
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`http://localhost:5000/api/update/users/update`, {
+        method: "PUT",
+        body: profileFormData,
+        credentials: "include",
+      });
 
       const data = await res.json();
+
+      if(!res.ok){
+        toast.error(data.message)
+      }
       setLoading(false);
-      setImagePreview("");
 
       if (res.ok) {
         dispatch(updateUser(data.rest));
-        return alert("User updated!");
+        toast.success("Profile updated successfully!")
       }
     } catch (err) {
       setLoading(false);
       setError(err.message);
-      console.log(err);
     }
   };
 
+  // Handle account deletion
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(
-        `https://blogmania-1.onrender.com/api/delete/user/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`http://localhost:5000/api/delete/user/${id}`, {
+        method: "DELETE",
+      });
 
       if (res.ok) {
         dispatch(deleteUser());
+        toast.success("Account deleted successfully!");
         navigate("/");
       }
     } catch (err) {
+      toast.error("Error occured ☹️, while deleting account");
       console.log(err);
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 items-center">
-      <h1 className="text-3xl font-bold mt-8">Profile</h1>
-      <div className="mt-4 w-full md:max-w-md">
-        <form
-          onSubmit={handleUpdateProfile}
-          className="p-6 bg-white rounded-md shadow-md flex flex-col gap-4"
-        >
-{/*           <h4 className="text-sm">Click the photo to change**</h4> */}
-{/*           <label
-            htmlFor="imageInput"
-            className="cursor-pointer flex justify-center"
-          >
-            <img
-              className="w-20  h-20 rounded-full object-cover"
-              src={
-                imagePreview
-                  ? imagePreview
-                  : containsHttp
-                  ? currentUser.image
-                  : `https://blogmania-1.onrender.com/${currentUser?.image}`
-              }
-              alt="user"
+    <div
+      className={`flex flex-col min-h-screen items-center px-4 py-10 transition-colors ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      <h1 className="text-3xl font-bold mb-6">Edit Profile</h1>
+      <div
+        className={`w-full max-w-lg p-6 rounded-lg shadow-md transition-all ${
+          darkMode ? "bg-gray-800" : "bg-white"
+        }`}
+      >
+        {/* Form */}
+        <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4">
+          {/* Profile Image */}
+          <div className="flex flex-col items-center gap-2">
+            <label htmlFor="imageInput" className="cursor-pointer">
+              <img
+                className="w-24 h-24 rounded-full object-cover border-2 border-gray-400 hover:border-gray-500 transition-all"
+                src={imagePreview}
+                alt="Profile"
+              />
+            </label>
+            <input
+              type="file"
+              id="imageInput"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
             />
-          </label>
-          <input
-            type="file"
-            id="imageInput"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          /> */}
-          <label>
-            Email <span className="text-red-600">(can't be changed)</span>
-          </label>
-          <input
-            type="text"
-            className="border border-gray-200 rounded-sm p-2"
-            value={currentUser?.email}
-            disabled
-          />
-          <label>Username</label>
-          <input
-            type="text"
-            onChange={handleFormDataChange}
-            name="username"
-            value={formData.username}
-            className="border border-gray-200 rounded-sm p-2"
-          />
-          {formValidation.usernameValidation &&
-            formData.username.length < 4 && (
-              <p className="text-sm text-red-700 pl-2">
-                {formValidation.usernameValidation}
-              </p>
-            )}
-          <label>Password</label>
-          <input
-            type="password"
-            onChange={handleFormDataChange}
-            placeholder="Enter Password"
-            name="password"
-            className="border border-gray-200 rounded-sm p-2"
-          />
-          {formValidation.passwordLengthValidation && (
-            <p className="text-sm text-red-700 pl-2">
-              {formValidation.passwordLengthValidation}
-            </p>
-          )}
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            onChange={handleFormDataChange}
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            className="border border-gray-200 rounded-sm p-2"
-          />
-          {formValidation.passwordValidation && (
-            <p className="text-sm text-red-700 pl-2">
-              {formValidation.passwordValidation}
-            </p>
-          )}
+            <span className="text-sm text-gray-400">
+              Click to update profile image
+            </span>
+          </div>
 
+          {/* Email (Non-editable) */}
+          <div>
+            <label className="text-sm font-medium">Email (Cannot be changed)</label>
+            <input
+              type="email"
+              value={currentUser?.email}
+              disabled
+              className="w-full mt-1 p-2 border rounded-md bg-gray-100 text-gray-400"
+            />
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="text-sm font-medium">Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleFormDataChange}
+              className={`w-full mt-1 p-2 border rounded-md ${
+                darkMode ? "bg-gray-700 text-white" : "bg-gray-100"
+              }`}
+            />
+
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="text-sm font-medium">New Password</label>
+            <input
+              type="password"
+              name="password"
+              onChange={handleFormDataChange}
+              className={`w-full mt-1 p-2 border rounded-md ${
+                darkMode ? "bg-gray-700 text-white" : "bg-gray-100"
+              }`}
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label className="text-sm font-medium">Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              onChange={handleFormDataChange}
+              className={`w-full mt-1 p-2 border rounded-md ${
+                darkMode ? "bg-gray-700 text-white" : "bg-gray-100"
+              }`}
+            />
+
+          </div>
+
+          {/* Update Button */}
           <button
             type="submit"
-            className="bg-slate-800 px-6 py-2 text-white rounded-md"
+            className={`w-full p-3 rounded-md text-white font-semibold transition-all ${
+              loading
+                ? "bg-gray-400"
+                : darkMode
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+            disabled={loading}
           >
-            {loading ? "Loading..." : "Update Profile"}
+            {loading ? "Updating..." : "Update Profile"}
           </button>
 
-          <span
+          {/* Delete Account */}
+          <button
+            type="button"
             onClick={() => setShowModal(true)}
-            className="text-red-800 cursor-pointer"
+            className="text-red-500 mt-2 hover:underline"
           >
-            Delete Account ?
-          </span>
+            Delete Account?
+          </button>
         </form>
-        {error && <p>{error}</p>}
-        <div className={`${showModal ? "visible" : "hidden"}`}>
+
+        {/* Error Handling */}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
+        {/* Modal */}
+        {showModal && (
           <Modal
             action={handleDeleteUser}
             setShowModal={setShowModal}
-            text={"Account"}
+            text="Account"
           />
-        </div>
+        )}
       </div>
     </div>
   );

@@ -54,7 +54,7 @@ const Footer = () => {
 
         {/* Copyright Section */}
         <div className="text-center text-sm">
-          <p>&copy; 2024 BlogMania. All Rights Reserved.</p>
+          <p>&copy; Made with ❤️ by Nehal Kadyan</p>
         </div>
       </div>
     </footer>

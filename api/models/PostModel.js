@@ -16,6 +16,7 @@ const postSchema = new mongoose.Schema(
     },
     image: {
       type: String,
+      required : true
     },
     caption: {
       type: String,
@@ -40,25 +41,8 @@ const postSchema = new mongoose.Schema(
       },
     ],
     comments: [
-      {
-        text: {
-          type: String,
-          required: true,
-        },
-        createdBy: {
-          type: String,
-          required: true,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-        userImg: {
-          type: String,
-       
-        },
-      },
-    ],
+      {type : mongoose.Schema.Types.ObjectId, ref: "Comment"}
+    ]
   },
   { timestamps: true }
 );

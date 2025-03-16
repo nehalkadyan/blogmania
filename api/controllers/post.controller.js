@@ -1,23 +1,20 @@
 const Post = require("../models/PostModel");
+const Comment = require("../models/CommentModel");
+const User = require("../models/UserModel");
 // const fs = require("fs");
 
 module.exports.createPost = async (req, res) => {
   const { title, description, category, caption } = req.body;
   console.log("body", req.body);
-
+  const imageUrl = req.imageUrl;
   const userId = req.user.id;
-  // const { originalname, path } = req.file;
-  // const parts = originalname.split(".");
-  // const ext = parts[parts.length - 1];
-  // const newPath = path + "." + ext;
-  // fs.renameSync(path, newPath);
 
   try {
     const newPost = new Post({
       title,
       description,
       category,
-      // image: newPath,
+      image: imageUrl,
       caption,
       createdBy: userId,
     });
@@ -35,12 +32,14 @@ module.exports.createPost = async (req, res) => {
 
 module.exports.updatePost = async (req, res) => {
   const { title, description, category, caption } = req.body;
+
+  console.log(title, description, category, caption);
+
   const { postId } = req.params;
-  // const { originalname, path } = req.file;
-  // const parts = originalname.split(".");
-  // const ext = parts[parts.length - 1];
-  // const newPath = path + "." + ext;
-  // fs.renameSync(path, newPath);
+
+  const imageUrl = req.imageUrl
+
+  console.log("imageUrl", imageUrl)
 
   try {
     const post = await Post.findById(postId);
@@ -53,17 +52,15 @@ module.exports.updatePost = async (req, res) => {
       post.description = description;
     }
 
-    if (post.category) {
+    if (category) {
       post.category = category;
     }
 
-    // if (req.file) {
-    //   post.image = newPath;
-    // } else {
-    //   post.image = image;
-    // }
+    if(imageUrl){
+      post.image = imageUrl
+    }
 
-    if (post.caption) {
+    if (caption) {
       post.caption = caption;
     }
 
@@ -112,21 +109,41 @@ module.exports.getPost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const postData = await Post.findById(id).populate("createdBy", [
-      "email",
-      "image",
-    ]);
+    const postData = await Post.findById(id)
+      .populate('createdBy') 
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'createdBy', 
+          model: 'User'
+        }
+      });
 
     if (!postData) {
-      res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: 'Post not found' });
     }
 
-    res.status(200).json({ message: "Post found", post: postData });
+    // Extract user data from comments
+    const userComments = postData.comments.map(comment => ({
+      text: comment.text,
+      createdBy: {
+        id: comment.createdBy._id,
+        email: comment.createdBy.email,
+        username: comment.createdBy.username
+      }
+    }));
+
+    res.status(200).json({ 
+      message: 'Post found', 
+      post: postData, 
+      userComments 
+    });
   } catch (err) {
-    console.log("Error fetching post", err);
-    res.status(500).json("Internal Server Error");
+    console.error('Error fetching post', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 module.exports.getAllPosts = async (req, res) => {
   try {
@@ -141,6 +158,7 @@ module.exports.getAllPosts = async (req, res) => {
       "email",
       "image",
     ]);
+    console.log("posts",posts)
 
     res.status(200).json({ posts });
   } catch (error) {
@@ -150,7 +168,7 @@ module.exports.getAllPosts = async (req, res) => {
 };
 
 module.exports.createComment = async (req, res) => {
-  const { text, email, image } = req.body;
+  const { text, email } = req.body;
   const { postId } = req.params;
 
   try {
@@ -160,7 +178,17 @@ module.exports.createComment = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    post.comments.push({ text, createdBy: email, userImg: image });
+    const user = await User.findOne({email : email})
+
+    const comment = new Comment({
+      text,
+      createdBy: user._id,
+      post : postId,
+    })
+
+    await comment.save()
+
+    post.comments.push(comment._id);
     await post.save();
 
     res.status(201).json({ message: "Comment added successfully", post });
@@ -171,25 +199,21 @@ module.exports.createComment = async (req, res) => {
 };
 
 module.exports.editComment = async (req, res) => {
-  const { postId, commentId } = req.params;
+  const {commentId } = req.params;
   const { text } = req.body;
-
+  
   try {
-    const post = await Post.findById(postId);
-
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    const comment = post.comments.find((c) => c._id.toString() === commentId);
+    const comment = await Comment.findById(commentId);
 
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
     }
 
     comment.text = text;
-    await post.save();
-    res.status(200).json({ message: "Comment ediited successfully", post });
+    await comment.save();
+
+    
+    res.status(200).json({ message: "Comment edited successfully",  });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
@@ -197,23 +221,16 @@ module.exports.editComment = async (req, res) => {
 };
 
 module.exports.deleteComment = async (req, res) => {
-  const { postId, commentId } = req.params;
+  const {postId, commentId } = req.params;
 
   try {
+
+    await Comment.deleteOne({_id : commentId});
+
     const post = await Post.findById(postId);
-    if (!post) {
-      res.status(404).json("Post not found");
-    }
 
-    const commentIndex = post.comments.findIndex(
-      (c) => c._id.toString() === commentId
-    );
-
-    if (commentIndex === -1) {
-      res.status(404).json("comment not found");
-    }
-
-    post.comments.splice(commentIndex, 1);
+    const filteredComments = post.comments.filter((c) => c._id.toString() !== commentId);
+    post.comments = filteredComments;
     await post.save();
 
     res.status(200).json({ message: "Comment deleted successfully" });
