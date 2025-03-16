@@ -66,7 +66,7 @@ const EditProfile = () => {
       if (formData.password) profileFormData.append("password", formData.password);
       if (formData.image) profileFormData.append("image", formData.image);
 
-      const res = await fetch(`http://localhost:5000/api/update/users/update`, {
+      const res = await fetch(`https://blogmania-2-0.onrender.com/api/update/users/update`, {
         method: "PUT",
         body: profileFormData,
         credentials: "include",
