@@ -65,9 +65,9 @@ function App() {
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/edit/:id" element={<EditPost />} />
         </Route>
-        <Route path="/post/:id" element={<Suspense  fallback={<Loader />>
-                                                    <SeparatePost />
-                                                    </Suspense> } />
+        <Route path="/post/:id" element={<Suspense fallback={<Loader />}>
+          <SeparatePost />
+        </Suspense>}/>
         <Route path="/about" element={<About />} />
         <Route path="/blogs" element={<Suspense fallback={<Loader />}><Blogs /></Suspense>} />
       </Routes>
