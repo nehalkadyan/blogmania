@@ -19,7 +19,7 @@ const ViewPosts = ({setActiveTab}) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/posts/post`, {
+        const res = await fetch(`https://blogmania-2-0.onrender.com/api/posts/post`, {
           method: "GET",
           credentials: "include",
         });
@@ -38,7 +38,7 @@ const ViewPosts = ({setActiveTab}) => {
   const handleDeletePost = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/posts/${postIdToBeDeleted}/delete`,
+        `https://blogmania-2-0.onrender.com/api/posts/${postIdToBeDeleted}/delete`,
         {
           method: "DELETE",
           credentials: "include",
