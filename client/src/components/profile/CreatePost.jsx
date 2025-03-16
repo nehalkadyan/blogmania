@@ -82,7 +82,7 @@ const CreatePost = ({ setActiveTab }) => {
       postFormData.append("caption", formData.caption);
       postFormData.append("image", formData.image);
 
-      const res = await fetch(`http://localhost:5000/api/posts/create`, {
+      const res = await fetch(`https://blogmania-2-0.onrender.com/api/posts/create`, {
         method: "POST",
         body: postFormData,
         credentials: "include",
