@@ -26,7 +26,7 @@ const Homepage = () => {
     window.scrollTo(0, 0);
     const fetchPosts = async () => {
       try {
-        let url = `http://localhost:5000/api/posts/allposts`;
+        let url = `https://blogmania-2-0.onrender.com/api/posts/allposts`;
         if (selectedCategory !== "All") {
           url += `?category=${selectedCategory}`;
         }
