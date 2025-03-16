@@ -12,7 +12,7 @@ const path = require("path");
 dotenv.config();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://blogmania-2-0.onrender.com",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
