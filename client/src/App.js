@@ -7,7 +7,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import Profile from "./pages/Profile";
-import SeparatePost from "./pages/SeparatePost";
 import EditPost from "./components/profile/EditPost";
 import Footer from "./components/Footer";
 import About from "./pages/About";
@@ -17,6 +16,7 @@ import Loader from "./components/Loader";
 
 const Homepage =  lazy(() => import("./pages/Homepage"));
 const Blogs = lazy(() => import("./pages/Blogs"))
+const SeparatePost = lazy(() => import("./pages/SeparatePost"))
 
 
 
@@ -65,7 +65,9 @@ function App() {
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/edit/:id" element={<EditPost />} />
         </Route>
-        <Route path="/post/:id" element={<SeparatePost />} />
+        <Route path="/post/:id" element={<Suspense  fallback={<Loader />>
+                                                    <SeparatePost />
+                                                    </Suspense> } />
         <Route path="/about" element={<About />} />
         <Route path="/blogs" element={<Suspense fallback={<Loader />}><Blogs /></Suspense>} />
       </Routes>
