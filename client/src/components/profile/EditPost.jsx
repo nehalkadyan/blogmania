@@ -115,7 +115,7 @@ const EditPost = () => {
       }
       updatePostData.append("caption", formData.caption);
 
-      const res = await fetch(`http://localhost:5000/api/posts/${id}/update`, {
+      const res = await fetch(`https://blogmania-2-0.onrender.com/api/posts/${id}/update`, {
         method: "PUT",
         body: updatePostData,
         credentials: "include",
