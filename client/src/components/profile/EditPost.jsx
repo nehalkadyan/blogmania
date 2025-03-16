@@ -48,7 +48,7 @@ const EditPost = () => {
     const fetchPost = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/posts/post/${id}`,
+          `https://blogmania-2-0.onrender.com/api/posts/post/${id}`,
           {
             method: "GET",
           }
