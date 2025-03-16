@@ -26,7 +26,7 @@ const Blogs = () => {
 
     const fetchPosts = async () => {
       try {
-        let url = `http://localhost:5000/api/posts/allposts`;
+        let url = `https://blogmania-2-0.onrender.com/api/posts/allposts`;
         const params = new URLSearchParams();
 
         if (selectedCategory !== "All") params.append("category", selectedCategory);
