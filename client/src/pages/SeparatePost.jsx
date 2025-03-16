@@ -46,7 +46,7 @@ const SeparatePost = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/posts/post/${id}`, {
+        const res = await fetch(`https://blogmania-2-0.onrender.com/api/posts/post/${id}`, {
           method: "GET",
         });
 
@@ -85,7 +85,7 @@ const SeparatePost = () => {
       commentData.append("email", currentUser?.email);
 
       const res = await fetch(
-        `http://localhost:5000/api/posts/${id}/comments`,
+        `https://blogmania-2-0.onrender.com/api/posts/${id}/comments`,
         {
           method: "POST",
           headers: {
@@ -121,7 +121,7 @@ const SeparatePost = () => {
   const handleUpdateComment = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/posts/${id}/${commentIdToBeEdited}`,
+        `https://blogmania-2-0.onrender.com/api/posts/${id}/${commentIdToBeEdited}`,
         {
           method: "PUT",
           headers: {
@@ -147,7 +147,7 @@ const SeparatePost = () => {
   const handleDeleteComment = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/posts/delete/${id}/${commentIdToBeDeleted}`,
+        `https://blogmania-2-0.onrender.com/api/posts/delete/${id}/${commentIdToBeDeleted}`,
         {
           method: "DELETE",
         }
@@ -174,7 +174,7 @@ const SeparatePost = () => {
     }
     try {
       const res = await fetch(
-        `http://localhost:5000/api/posts/${id}/like/postLike`,
+        `https://blogmania-2-0.onrender.com/api/posts/${id}/like/postLike`,
         {
           method: "PUT",
           headers: {
